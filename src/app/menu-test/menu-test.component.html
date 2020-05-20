@@ -1,19 +1,14 @@
 <div appMenuBar>
-  <!-- <button [appMenuButton]="file">File</button> -->
-  <!-- <button [appMenuButton]="edit">Edit</button> -->
-
-  <button appMenuButton #file="appMenuButton">File</button>
-  <button appMenuButton #edit="appMenuButton">Edit</button>
+  <button [appMenuButton]="file">File</button>
+  <button [appMenuButton]="edit">Edit</button>
 </div>
 
-<!-- <div appMenuPanel #file="appMenuPanel"> -->
-<div *appMenuPanel="file">
+<ng-template appMenuPanel #file="appMenuPanel">
   <button>Open</button>
   <button>Quit</button>
-</div>
+</ng-template>
 
-<!-- <div appMenuPanel #edit="appMenuPanel"> -->
-<div *appMenuPanel="edit">
+<ng-template appMenuPanel #edit="appMenuPanel">
   <button>Clear</button>
   <button>Save</button>
-</div>
+</ng-template>
