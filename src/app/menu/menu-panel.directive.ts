@@ -1,4 +1,10 @@
-import { Directive, TemplateRef, ViewContainerRef, Input } from '@angular/core';
+import {
+  Directive,
+  TemplateRef,
+  ViewContainerRef,
+  Input,
+  HostListener,
+} from '@angular/core';
 import { MenuButtonDirective } from './menu-button.directive';
 import { Overlay } from '@angular/cdk/overlay';
 import { TemplatePortal } from '@angular/cdk/portal';
@@ -23,13 +29,13 @@ export class MenuPanelDirective {
   onClick() {
     /*
       TODO:
-        - open below the given button - now it opens left
+        - vertically align sub-menu buttons
         - close when clicking outside of opened panel
      */
     const strategy = this.overlay
       .position()
-      .flexibleConnectedTo(this.button as any)
-      .setOrigin(this.button as any)
+      .flexibleConnectedTo(this.button.element)
+      .setOrigin(this.button.element)
       .withPositions([
         {
           originX: 'start',
