@@ -47,9 +47,15 @@ export class MenuPanelDirective {
       .withLockedPosition();
     const overlay = this.overlay.create({
       positionStrategy: strategy,
+      // backdrop has a style applied to it
+      hasBackdrop: true,
     });
 
     const portal = new TemplatePortal(this._template, this._viewContainer);
     overlay.attach(portal);
+
+    overlay
+      .backdropClick()
+      .subscribe(() => console.log('TODO close menu if open'));
   }
 }
