@@ -1,0 +1,19 @@
+<div appMenuBar>
+  <!-- <button [appMenuButton]="file">File</button> -->
+  <!-- <button [appMenuButton]="edit">Edit</button> -->
+
+  <button appMenuButton #file="appMenuButton">File</button>
+  <button appMenuButton #edit="appMenuButton">Edit</button>
+</div>
+
+<!-- <div appMenuPanel #file="appMenuPanel"> -->
+<div *appMenuPanel="file">
+  <button>Open</button>
+  <button>Quit</button>
+</div>
+
+<!-- <div appMenuPanel #edit="appMenuPanel"> -->
+<div *appMenuPanel="edit">
+  <button>Clear</button>
+  <button>Save</button>
+</div>

@@ -5,12 +5,14 @@ import {
   OnChanges,
   OnInit,
   Input,
+  HostBinding,
 } from '@angular/core';
 
 @Directive({
   selector: '[appNgLoop]',
 })
 export class NgLoopDirective implements OnChanges, OnInit {
+  isActive = true;
   /* when using `let nr of numbers` we get:
     <ng-template appNgLoop #nr [appNgLoopOf]="numbers">
       <div>
