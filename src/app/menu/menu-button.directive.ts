@@ -3,26 +3,6 @@ import { Overlay, OverlayRef } from '@angular/cdk/overlay';
 import { TemplatePortal } from '@angular/cdk/portal';
 import { MenuPanelDirective } from './menu-panel.directive';
 
-/*
-  TODO
-  - on hover - if another button is open, close it and open this one (will
-    backdrop get in the way?)
-
-  ---------
-
-  backdrop changes the background color (to focus on opened content) and it
-  prevents mouse enter events from hitting the other buttons.
-
-  approaches to 'click-out-to-close':
-    - listen for document click events and filter out those which are in the
-      given template. This should consider parent menus - requires passing
-      events to close menus and keep others open
-        (rxjs fromEvent, filter and takeOne)
-    - listen for click events through out the parent chain with the menu bar
-      listening to the dom. Passing up/down the events through the menu tree.
-      (not ideal)
-    - what does mat-menu do?
-*/
 @Directive({
   selector: '[appMenuButton]',
   exportAs: 'appMenuButton',
