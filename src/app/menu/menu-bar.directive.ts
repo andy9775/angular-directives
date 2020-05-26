@@ -1,10 +1,9 @@
-import { Directive } from '@angular/core';
+import {Directive} from '@angular/core';
 
 @Directive({
-  selector: '[appMenuBar]'
+  selector: '[appMenuBar], [cdkMenuBar]',
+  exportAs: 'cdkMenuBar',
 })
 export class MenuBarDirective {
-
-  constructor() { }
-
+  constructor() {}
 }

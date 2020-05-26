@@ -1,17 +1,17 @@
-import { Directive, ElementRef, Input, ViewContainerRef } from '@angular/core';
-import { Overlay, OverlayRef } from '@angular/cdk/overlay';
-import { TemplatePortal } from '@angular/cdk/portal';
-import { MenuPanelDirective } from './menu-panel.directive';
+import {Directive, ElementRef, Input, ViewContainerRef} from '@angular/core';
+import {Overlay, OverlayRef} from '@angular/cdk/overlay';
+import {TemplatePortal} from '@angular/cdk/portal';
+import {MenuPanelDirective} from './menu-panel.directive';
 
 @Directive({
-  selector: '[appMenuButton]',
-  exportAs: 'appMenuButton',
+  selector: '[appMenuButton],[cdkMenuItem]',
+  exportAs: 'cdkMenuItem',
   host: {
     '(click)': 'onClick()',
   },
 })
 export class MenuButtonDirective {
-  @Input('appMenuButton') templateRef: MenuPanelDirective;
+  @Input('cdkMenuItem') templateRef: MenuPanelDirective;
 
   private _overlayRef: OverlayRef;
 
@@ -31,10 +31,7 @@ export class MenuButtonDirective {
       // backdrop has a default style applied to it!!!
       hasBackdrop: true,
     });
-    const portal = new TemplatePortal(
-      this.templateRef.template,
-      this._viewContainer
-    );
+    const portal = new TemplatePortal(this.templateRef.template, this._viewContainer);
     this._overlayRef.attach(portal);
 
     this._setCloseHandlers();
@@ -67,3 +64,8 @@ export class MenuButtonDirective {
     this._overlayRef.backdropClick().subscribe(this._closeMenu.bind(this));
   }
 }
+
+// for the cdk overlay example, what should the style be?
+
+// One example using the default directives
+// Another example using a custom directive (say a timeout warning)

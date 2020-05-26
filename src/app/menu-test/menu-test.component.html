@@ -1,14 +1,19 @@
-<div appMenuBar>
-  <button [appMenuButton]="file">File</button>
-  <button [appMenuButton]="edit">Edit</button>
+<div cdkMenuBar>
+  <button [cdkMenuItem]="file">File</button>
+  <button [cdkMenuItem]="edit">Edit</button>
 </div>
 
-<ng-template appMenuPanel #file="appMenuPanel">
-  <button>Open</button>
-  <button>Quit</button>
+<!-- use panel to get reference to child cdkMenu -->
+<ng-template cdkMenuPanel #file="cdkMenuPanel">
+  <div cdkMenu index role>
+    <button>Open</button>
+    <button>Quit</button>
+  </div>
 </ng-template>
 
-<ng-template appMenuPanel #edit="appMenuPanel">
-  <button>Clear</button>
-  <button>Save</button>
+<ng-template cdkMenuPanel #edit="cdkMenuPanel">
+  <div cdkMenu indexrole>
+    <button>Clear</button>
+    <button>Save</button>
+  </div>
 </ng-template>
