@@ -1,4 +1,5 @@
-import {Directive, TemplateRef} from '@angular/core';
+import {Directive, TemplateRef, ViewChild} from '@angular/core';
+import {MenuDirective} from './menu.directive';
 
 @Directive({
   selector: '[appMenuPanel], [cdkMenuPanel]',
@@ -7,7 +8,7 @@ import {Directive, TemplateRef} from '@angular/core';
 export class MenuPanelDirective {
   /*
     TODO
-    - menu panel allows for sub-elements to be lined up horizontally - are we ok
+      - how to get a reference to the child element
 
   */
   constructor(public template: TemplateRef<any>) {}
