@@ -4,6 +4,9 @@ import {MenuDirective} from './menu.directive';
 @Directive({
   selector: '[appMenuPanel], [cdkMenuPanel]',
   exportAs: 'cdkMenuPanel',
+  host: {
+    '(keydown)': 'keydown($event)',
+  },
 })
 export class MenuPanelDirective {
   child: MenuDirective;
@@ -17,5 +20,8 @@ export class MenuPanelDirective {
 
   registerChildMenu(child: MenuDirective) {
     this.child = child;
+  }
+  keydown() {
+    console.log('keydown');
   }
 }

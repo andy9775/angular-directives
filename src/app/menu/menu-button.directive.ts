@@ -1,11 +1,19 @@
-import {Directive, ElementRef, Input, ViewContainerRef, Optional} from '@angular/core';
+import {
+  Directive,
+  ElementRef,
+  Input,
+  ViewContainerRef,
+  Optional,
+  ViewChildren,
+  QueryList,
+} from '@angular/core';
 import {Overlay, OverlayRef} from '@angular/cdk/overlay';
 import {TemplatePortal} from '@angular/cdk/portal';
 import {MenuPanelDirective} from './menu-panel.directive';
 import {MenuDirective} from './menu.directive';
-import {EventEmitter} from 'protractor';
-import {Observable, Subject} from 'rxjs';
+import {Subject} from 'rxjs';
 import {MenuBarDirective} from './menu-bar.directive';
+import {FocusableOption} from '@angular/cdk/a11y';
 
 /*
         TODO
@@ -22,15 +30,14 @@ import {MenuBarDirective} from './menu-bar.directive';
     // a11y
     role: 'menuitem',
     type: 'button', // necessary ??
-    tabindex: '-1',
+    tabindex: '-1', // check if disabled
     '[attr.aria-haspopup]': '!!templateRef ? "menu" : "false"', // only if it has a ref??
     '[attr.aria-expanded]': '!!_overlayRef',
   },
 })
-export class MenuButtonDirective {
+export class MenuButtonDirective implements FocusableOption {
   @Input('cdkMenuItem') templateRef: MenuPanelDirective;
   private _overlayRef: OverlayRef;
-
   mouseEnterEmitter = new Subject();
 
   constructor(
@@ -49,9 +56,14 @@ export class MenuButtonDirective {
     }
   }
 
+  focus() {
+    // debug to determine which element has focus
+    console.log('focus: ', this._element.nativeElement.innerText);
+  }
+
   onClick() {
     // check - do nothing if there is a child menu?
-    !!this._overlayRef ? this.closeMenu() : this._openMenu();
+    this.isOpen() ? this.closeMenu() : this._openMenu();
   }
 
   mouseEnter() {
@@ -84,7 +96,7 @@ export class MenuButtonDirective {
     }
     // TODO better clean up
     if (this._overlayRef) {
-      console.log(this._overlayRef.detach());
+      this._overlayRef.detach();
 
       this._overlayRef.dispose();
 
