@@ -1,5 +1,5 @@
-import {Directive, Input, AfterContentInit, QueryList, Renderer2} from '@angular/core';
-import {FocusKeyManager} from '@angular/cdk/a11y';
+import {Directive, Input, AfterContentInit, QueryList, Renderer2, ElementRef} from '@angular/core';
+import {FocusKeyManager, FocusMonitor} from '@angular/cdk/a11y';
 import {MenuButtonDirective} from './menu-button.directive';
 import {SPACE, hasModifierKey} from '@angular/cdk/keycodes';
 
@@ -27,7 +27,9 @@ export class MenuBarDirective implements AfterContentInit {
   private _keyManager: FocusKeyManager<MenuButtonDirective>;
 
   // TODO key manager
-  constructor() {}
+  constructor(private _element: ElementRef, private fm: FocusMonitor) {
+    fm.monitor(_element);
+  }
 
   ngAfterContentInit() {
     this._keyManager = new FocusKeyManager(this._children)
@@ -58,6 +60,11 @@ export class MenuBarDirective implements AfterContentInit {
       case SPACE:
         event.preventDefault();
         this._keyManager.activeItem.onClick();
+
+        this._keyManager.activeItem.closeEventEmitter.subscribe(() => {
+          this._element.nativeElement.focus();
+        });
+
         if (this._keyManager.activeItem.templateRef.child) {
           this._keyManager.activeItem.templateRef.child.focusFirstItem();
         }

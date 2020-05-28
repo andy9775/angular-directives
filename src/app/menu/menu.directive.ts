@@ -1,8 +1,9 @@
 import {Directive, Input, AfterContentInit, ElementRef, AfterViewInit} from '@angular/core';
 import {MenuPanelDirective} from './menu-panel.directive';
 import {MenuButtonDirective} from './menu-button.directive';
-import {FocusKeyManager} from '@angular/cdk/a11y';
-import {SPACE} from '@angular/cdk/keycodes';
+import {FocusKeyManager, FocusMonitor} from '@angular/cdk/a11y';
+import {SPACE, LEFT_ARROW, ESCAPE} from '@angular/cdk/keycodes';
+import {Subject} from 'rxjs';
 
 /*
   TODO
@@ -33,8 +34,15 @@ export class MenuDirective implements AfterContentInit {
 
   private _keyManager: FocusKeyManager<MenuButtonDirective>;
 
+  closeEventEmitter = new Subject();
+
   // TODO key manager
-  constructor(private _parent: MenuPanelDirective, private _element: ElementRef) {
+  constructor(
+    private _parent: MenuPanelDirective,
+    private _element: ElementRef,
+    private fm: FocusMonitor
+  ) {
+    fm.monitor(_element);
     _parent.registerChildMenu(this);
   }
 
@@ -44,9 +52,17 @@ export class MenuDirective implements AfterContentInit {
       case SPACE:
         event.preventDefault();
         this._keyManager.activeItem.onClick();
+
+        this._keyManager.activeItem.closeEventEmitter.subscribe(() => {
+          this._element.nativeElement.focus();
+        });
+
         if (this._keyManager.activeItem.templateRef.child) {
           this._keyManager.activeItem.templateRef.child.focusFirstItem();
         }
+        break;
+      case ESCAPE:
+        this.closeEventEmitter.next();
         break;
       default:
         this._keyManager.onKeydown(event);
@@ -55,11 +71,12 @@ export class MenuDirective implements AfterContentInit {
 
   ngAfterContentInit() {
     this._keyManager = new FocusKeyManager(this.children).withWrap().withVerticalOrientation();
+    this._keyManager.change.subscribe((i) => console.log(i));
   }
 
   focusFirstItem() {
     this._element.nativeElement.focus();
-    console.log(this._element.nativeElement);
+    this._keyManager.setActiveItem(0);
   }
 
   registerChild(child: MenuButtonDirective) {

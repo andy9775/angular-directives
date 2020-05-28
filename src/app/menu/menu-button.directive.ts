@@ -6,6 +6,7 @@ import {
   Optional,
   ViewChildren,
   QueryList,
+  Renderer2,
 } from '@angular/core';
 import {Overlay, OverlayRef} from '@angular/cdk/overlay';
 import {TemplatePortal} from '@angular/cdk/portal';
@@ -13,7 +14,7 @@ import {MenuPanelDirective} from './menu-panel.directive';
 import {MenuDirective} from './menu.directive';
 import {Subject} from 'rxjs';
 import {MenuBarDirective} from './menu-bar.directive';
-import {FocusableOption} from '@angular/cdk/a11y';
+import {FocusableOption, FocusMonitor} from '@angular/cdk/a11y';
 
 /*
         TODO
@@ -39,11 +40,13 @@ export class MenuButtonDirective implements FocusableOption {
   @Input('cdkMenuItem') templateRef: MenuPanelDirective;
   private _overlayRef: OverlayRef;
   mouseEnterEmitter = new Subject();
+  closeEventEmitter = new Subject();
 
   constructor(
     private _overlay: Overlay,
     private _element: ElementRef,
     private _viewContainer: ViewContainerRef,
+    private fm: FocusMonitor,
     // if not null this button is within a sub-menu (hacky)
     @Optional() private _parentMenu?: MenuDirective,
     @Optional() private _parentMenuBar?: MenuBarDirective
@@ -54,11 +57,13 @@ export class MenuButtonDirective implements FocusableOption {
     if (_parentMenuBar) {
       _parentMenuBar.registerChild(this);
     }
+    fm.monitor(_element);
   }
 
   focus() {
     // debug to determine which element has focus
-    console.log('focus: ', this._element.nativeElement.innerText);
+    // console.log('focus: ', this._element.nativeElement.innerText);
+    this._element.nativeElement.focus();
   }
 
   onClick() {
@@ -87,12 +92,18 @@ export class MenuButtonDirective implements FocusableOption {
       this._overlayRef.attach(portal);
 
       this._setCloseHandlers();
+      if (this.templateRef.child) {
+        this.templateRef.child.closeEventEmitter.subscribe(() => {
+          this.closeMenu();
+        });
+      }
     }
   }
 
   closeMenu() {
-    if (this.templateRef.child) {
+    if (this.templateRef && this.templateRef.child) {
       this.templateRef.child.children.forEach((child) => child.closeMenu());
+      this.templateRef.child.closeEventEmitter.unsubscribe();
     }
     // TODO better clean up
     if (this._overlayRef) {
@@ -102,6 +113,8 @@ export class MenuButtonDirective implements FocusableOption {
 
       this._overlayRef = null;
     }
+
+    this.closeEventEmitter.next();
   }
 
   private _getOverlayPositionStrategy() {
