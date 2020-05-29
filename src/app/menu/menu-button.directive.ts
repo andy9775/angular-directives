@@ -23,7 +23,7 @@ import {FocusableOption, FocusMonitor} from '@angular/cdk/a11y';
           id??
       */
 @Directive({
-  selector: '[appMenuButton],[cdkMenuItem]',
+  selector: '[appMenuButton],[cdkMenuItem], [cdkTriggerFor]',
   exportAs: 'cdkMenuItem',
   host: {
     '(focus)': 'focusEventEmitter.next(this)',
@@ -39,7 +39,7 @@ import {FocusableOption, FocusMonitor} from '@angular/cdk/a11y';
   },
 })
 export class MenuButtonDirective implements FocusableOption {
-  @Input('cdkMenuItem') templateRef: MenuPanelDirective;
+  @Input('cdkTriggerFor') templateRef: MenuPanelDirective;
   private _overlayRef: OverlayRef;
   mouseEnterEmitter = new Subject();
   closeEventEmitter = new Subject();

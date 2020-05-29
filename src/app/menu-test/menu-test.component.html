@@ -37,14 +37,14 @@
 </style>
 
 <ul cdkMenuBar>
-  <li><a id="file_button" [cdkMenuItem]="file">File</a></li>
-  <li><a id="edit_button" [cdkMenuItem]="edit">Edit</a></li>
+  <li><a id="file_button" [cdkTriggerFor]="file">File</a></li>
+  <li><a id="edit_button" [cdkTriggerFor]="edit">Edit</a></li>
 </ul>
 
 <!-- use panel to get reference to child cdkMenu -->
 <ng-template cdkMenuPanel #file="cdkMenuPanel">
   <ul cdkMenu>
-    <li><a id="open_with_button" [cdkMenuItem]="open">Open with...</a></li>
+    <li><a id="open_with_button" [cdkTriggerFor]="open">Open with...</a></li>
     <li><a id="quit_button" cdkMenuItem>Quit</a></li>
   </ul>
 </ng-template>
