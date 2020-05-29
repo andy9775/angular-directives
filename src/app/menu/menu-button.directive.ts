@@ -26,6 +26,7 @@ import {FocusableOption, FocusMonitor} from '@angular/cdk/a11y';
   selector: '[appMenuButton],[cdkMenuItem]',
   exportAs: 'cdkMenuItem',
   host: {
+    '(focus)': 'focusEventEmitter.next(this)',
     '(mouseenter)': 'mouseEnter()',
     '(click)': 'onClick()',
     // a11y
@@ -41,6 +42,7 @@ export class MenuButtonDirective implements FocusableOption {
   private _overlayRef: OverlayRef;
   mouseEnterEmitter = new Subject();
   closeEventEmitter = new Subject();
+  focusEventEmitter = new Subject<MenuButtonDirective>();
 
   constructor(
     private _overlay: Overlay,
@@ -64,6 +66,7 @@ export class MenuButtonDirective implements FocusableOption {
     // debug to determine which element has focus
     // console.log('focus: ', this._element.nativeElement.innerText);
     this._element.nativeElement.focus();
+    // this.focusEventEmitter.next(this);
   }
 
   onClick() {
@@ -72,6 +75,7 @@ export class MenuButtonDirective implements FocusableOption {
   }
 
   mouseEnter() {
+    this.focus();
     if ((!!this._parentMenuBar && this._parentMenuBar.hasOpenChild()) || !this._parentMenuBar) {
       // only open on mouse enter if nothing else is open
       !this._overlayRef && this._openMenu();
@@ -97,6 +101,9 @@ export class MenuButtonDirective implements FocusableOption {
           this.closeMenu();
         });
       }
+
+      // get focus event from the sub-menu
+      this.templateRef.child.focusEventEmitter.subscribe((c) => this.focusEventEmitter.next(c));
     }
   }
 
@@ -113,8 +120,11 @@ export class MenuButtonDirective implements FocusableOption {
 
       this._overlayRef = null;
     }
-
     this.closeEventEmitter.next();
+  }
+
+  id(): string | null {
+    return this._element.nativeElement.getAttribute('id');
   }
 
   private _getOverlayPositionStrategy() {

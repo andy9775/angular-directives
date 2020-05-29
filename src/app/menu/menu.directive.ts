@@ -35,6 +35,7 @@ export class MenuDirective implements AfterContentInit {
   private _keyManager: FocusKeyManager<MenuButtonDirective>;
 
   closeEventEmitter = new Subject();
+  focusEventEmitter = new Subject<MenuButtonDirective>();
 
   // TODO key manager
   constructor(
@@ -54,7 +55,8 @@ export class MenuDirective implements AfterContentInit {
         this._keyManager.activeItem.onClick();
 
         this._keyManager.activeItem.closeEventEmitter.subscribe(() => {
-          this._element.nativeElement.focus();
+          // this._element.nativeElement.focus();
+          this._keyManager.activeItem.focus();
         });
 
         if (this._keyManager.activeItem.templateRef.child) {
@@ -86,7 +88,7 @@ export class MenuDirective implements AfterContentInit {
   }
 
   focusFirstItem() {
-    this._element.nativeElement.focus();
+    // this._element.nativeElement.focus();
     this._keyManager.setActiveItem(0);
   }
 
@@ -99,5 +101,6 @@ export class MenuDirective implements AfterContentInit {
       });
     });
     this.children.push(child);
+    child.focusEventEmitter.subscribe((c) => this.focusEventEmitter.next(c));
   }
 }

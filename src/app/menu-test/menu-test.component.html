@@ -47,29 +47,29 @@
 
 <div cdkMenuBar>
   <ul>
-    <li><button [cdkMenuItem]="file">File</button></li>
-    <li><button [cdkMenuItem]="edit">Edit</button></li>
+    <li><button id="file_button" [cdkMenuItem]="file">File</button></li>
+    <li><button id="edit_button" [cdkMenuItem]="edit">Edit</button></li>
   </ul>
 </div>
 
 <!-- use panel to get reference to child cdkMenu -->
 <ng-template cdkMenuPanel #file="cdkMenuPanel">
   <ul cdkMenu>
-    <li><button [cdkMenuItem]="open">Open with...</button></li>
-    <li><button cdkMenuItem>Quit</button></li>
+    <li><button id="open_with_button" [cdkMenuItem]="open">Open with...</button></li>
+    <li><button id="quit_button" cdkMenuItem>Quit</button></li>
   </ul>
 </ng-template>
 
 <ng-template cdkMenuPanel #open="cdkMenuPanel">
   <ul cdkMenu>
-    <li><button cdkMenuItem>Office</button></li>
-    <li><button cdkMenuItem>Excel</button></li>
+    <li><button id="open_with_office_button" cdkMenuItem>Office</button></li>
+    <li><button id="open_with_excel_button" cdkMenuItem>Excel</button></li>
   </ul>
 </ng-template>
 
 <ng-template cdkMenuPanel #edit="cdkMenuPanel">
   <ul cdkMenu>
-    <li><button cdkMenuItem>Clear</button></li>
-    <li><button cdkMenuItem>Save</button></li>
+    <li><button id="edit_clear_button" cdkMenuItem>Clear</button></li>
+    <li><button id="edit_save_button" cdkMenuItem>Save</button></li>
   </ul>
 </ng-template>

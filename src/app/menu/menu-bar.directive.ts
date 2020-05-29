@@ -17,6 +17,8 @@ import {SPACE, hasModifierKey} from '@angular/cdk/keycodes';
     // '[tabindex]': 'hasOpenChild() ? -1 : 0',
     '[tabindex]': '0',
     '[attr.aria-orientation]': 'orientation',
+    // should aria-activedescendant be un-set at some point?
+    '[attr.aria-activedescendant]': '_ariaActivedescendant',
   },
 })
 export class MenuBarDirective implements AfterContentInit {
@@ -25,6 +27,7 @@ export class MenuBarDirective implements AfterContentInit {
 
   private _children: Array<MenuButtonDirective> = new Array<MenuButtonDirective>();
   private _keyManager: FocusKeyManager<MenuButtonDirective>;
+  private _ariaActivedescendant: string | null = null;
 
   // TODO key manager
   constructor(private _element: ElementRef, private fm: FocusMonitor) {
@@ -47,6 +50,10 @@ export class MenuBarDirective implements AfterContentInit {
       });
     });
     this._children.push(child);
+
+    child.focusEventEmitter.subscribe((c) => {
+      this._ariaActivedescendant = c.id();
+    });
   }
 
   hasOpenChild() {
