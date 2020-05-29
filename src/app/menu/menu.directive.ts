@@ -2,7 +2,7 @@ import {Directive, Input, AfterContentInit, ElementRef, AfterViewInit} from '@an
 import {MenuPanelDirective} from './menu-panel.directive';
 import {MenuButtonDirective} from './menu-button.directive';
 import {FocusKeyManager, FocusMonitor} from '@angular/cdk/a11y';
-import {SPACE, LEFT_ARROW, ESCAPE} from '@angular/cdk/keycodes';
+import {SPACE, LEFT_ARROW, ESCAPE, RIGHT_ARROW} from '@angular/cdk/keycodes';
 import {Subject} from 'rxjs';
 
 /*
@@ -64,6 +64,17 @@ export class MenuDirective implements AfterContentInit {
       case ESCAPE:
         this.closeEventEmitter.next();
         break;
+      /*
+          TODO
+            right arrow:
+              if has sub-menu, open it
+              otherwise fall through
+            left arrow:
+              close this menu and go back to parent
+
+            if the top most (part of menu bar) allow left arrow (or right without sub) to toggle
+            to next/previous sub-menu
+         */
       default:
         this._keyManager.onKeydown(event);
     }

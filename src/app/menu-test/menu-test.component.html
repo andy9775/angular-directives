@@ -1,4 +1,12 @@
 <style>
+  [cdkmenubar] ul {
+    display: flex;
+    flex-direction: row;
+    margin: 0;
+  }
+  li {
+    list-style: none;
+  }
   [cdkmenubar] button {
     box-sizing: border-box;
     cursor: pointer;
@@ -16,6 +24,8 @@
     display: flex;
     flex-direction: column;
     min-width: 100px;
+    margin: 0;
+    padding: 0;
   }
   [cdkmenu] button {
     box-sizing: border-box;
@@ -36,28 +46,30 @@
 </style>
 
 <div cdkMenuBar>
-  <button [cdkMenuItem]="file">File</button>
-  <button [cdkMenuItem]="edit">Edit</button>
+  <ul>
+    <li><button [cdkMenuItem]="file">File</button></li>
+    <li><button [cdkMenuItem]="edit">Edit</button></li>
+  </ul>
 </div>
 
 <!-- use panel to get reference to child cdkMenu -->
 <ng-template cdkMenuPanel #file="cdkMenuPanel">
-  <div cdkMenu>
-    <button [cdkMenuItem]="open">Open with...</button>
-    <button cdkMenuItem>Quit</button>
-  </div>
+  <ul cdkMenu>
+    <li><button [cdkMenuItem]="open">Open with...</button></li>
+    <li><button cdkMenuItem>Quit</button></li>
+  </ul>
 </ng-template>
 
 <ng-template cdkMenuPanel #open="cdkMenuPanel">
-  <div cdkMenu>
-    <button cdkMenuItem>Office</button>
-    <button cdkMenuItem>Excel</button>
-  </div>
+  <ul cdkMenu>
+    <li><button cdkMenuItem>Office</button></li>
+    <li><button cdkMenuItem>Excel</button></li>
+  </ul>
 </ng-template>
 
 <ng-template cdkMenuPanel #edit="cdkMenuPanel">
-  <div cdkMenu>
-    <button cdkMenuItem>Clear</button>
-    <button cdkMenuItem>Save</button>
-  </div>
+  <ul cdkMenu>
+    <li><button cdkMenuItem>Clear</button></li>
+    <li><button cdkMenuItem>Save</button></li>
+  </ul>
 </ng-template>
