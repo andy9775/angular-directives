@@ -19,6 +19,7 @@ import {SPACE, hasModifierKey} from '@angular/cdk/keycodes';
     '[attr.aria-orientation]': 'orientation',
     // should aria-activedescendant be un-set at some point?
     '[attr.aria-activedescendant]': '_ariaActivedescendant',
+    '[attr.aria-expanded]': 'hasOpenChild()',
   },
 })
 export class MenuBarDirective implements AfterContentInit {
