@@ -9,6 +9,5 @@ import {MenuDirective} from './menu.directive';
   declarations: [MenuPanelDirective, MenuBarDirective, MenuButtonDirective, MenuDirective],
   imports: [CommonModule],
   exports: [MenuPanelDirective, MenuBarDirective, MenuButtonDirective, MenuDirective],
-  providers: [MenuPanelDirective, MenuDirective, MenuButtonDirective],
 })
 export class MenuModule {}
