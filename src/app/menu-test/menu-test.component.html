@@ -1,5 +1,5 @@
 <style>
-  [cdkmenubar] ul {
+  [cdkmenubar] {
     display: flex;
     flex-direction: row;
     margin: 0;
@@ -45,12 +45,10 @@
   }
 </style>
 
-<div cdkMenuBar>
-  <ul>
-    <li><button id="file_button" [cdkMenuItem]="file">File</button></li>
-    <li><button id="edit_button" [cdkMenuItem]="edit">Edit</button></li>
-  </ul>
-</div>
+<ul cdkMenuBar>
+  <li><button id="file_button" [cdkMenuItem]="file">File</button></li>
+  <li><button id="edit_button" [cdkMenuItem]="edit">Edit</button></li>
+</ul>
 
 <!-- use panel to get reference to child cdkMenu -->
 <ng-template cdkMenuPanel #file="cdkMenuPanel">
