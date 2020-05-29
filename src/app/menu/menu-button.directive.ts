@@ -27,12 +27,13 @@ import {FocusableOption, FocusMonitor} from '@angular/cdk/a11y';
   exportAs: 'cdkMenuItem',
   host: {
     '(focus)': 'focusEventEmitter.next(this)',
+    '(blur)': 'isFocused = false',
     '(mouseenter)': 'mouseEnter()',
     '(click)': 'onClick()',
     // a11y
     role: 'menuitem',
     type: 'button', // necessary ??
-    tabindex: '-1', // check if disabled
+    '[tabindex]': 'isFocused ? "0" : "-1"', // check if disabled
     '[attr.aria-haspopup]': '!!templateRef ? "menu" : "false"', // only if it has a ref??
     '[attr.aria-expanded]': '!!_overlayRef',
   },
@@ -43,6 +44,8 @@ export class MenuButtonDirective implements FocusableOption {
   mouseEnterEmitter = new Subject();
   closeEventEmitter = new Subject();
   focusEventEmitter = new Subject<MenuButtonDirective>();
+
+  isFocused = false;
 
   constructor(
     private _overlay: Overlay,
@@ -66,6 +69,7 @@ export class MenuButtonDirective implements FocusableOption {
     // debug to determine which element has focus
     // console.log('focus: ', this._element.nativeElement.innerText);
     this._element.nativeElement.focus();
+    this.isFocused = true;
     // this.focusEventEmitter.next(this);
   }
 
@@ -103,7 +107,9 @@ export class MenuButtonDirective implements FocusableOption {
       }
 
       // get focus event from the sub-menu
-      this.templateRef.child.focusEventEmitter.subscribe((c) => this.focusEventEmitter.next(c));
+      this.templateRef.child.focusEventEmitter.subscribe((c) => {
+        this.focusEventEmitter.next(c);
+      });
     }
   }
 
@@ -121,6 +127,8 @@ export class MenuButtonDirective implements FocusableOption {
       this._overlayRef = null;
     }
     this.closeEventEmitter.next();
+
+    this.focus();
   }
 
   id(): string | null {

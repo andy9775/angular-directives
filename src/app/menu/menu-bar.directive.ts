@@ -29,6 +29,7 @@ export class MenuBarDirective implements AfterContentInit {
   private _children: Array<MenuButtonDirective> = new Array<MenuButtonDirective>();
   private _keyManager: FocusKeyManager<MenuButtonDirective>;
   private _ariaActivedescendant: string | null = null;
+  previousFocused: MenuButtonDirective = null;
 
   // TODO key manager
   constructor(private _element: ElementRef, private fm: FocusMonitor) {
