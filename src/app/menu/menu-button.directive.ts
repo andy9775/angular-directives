@@ -19,6 +19,7 @@ import {FocusableOption, FocusMonitor} from '@angular/cdk/a11y';
 /*
         TODO
           aria-controls
+          disabled
 
           id??
       */
