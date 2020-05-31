@@ -4,6 +4,7 @@ import {MenuButtonDirective} from './menu-button.directive';
 import {FocusKeyManager, FocusMonitor} from '@angular/cdk/a11y';
 import {SPACE, LEFT_ARROW, ESCAPE, RIGHT_ARROW, TAB} from '@angular/cdk/keycodes';
 import {Subject} from 'rxjs';
+import {RootMenu} from './menu';
 
 /*
   TODO
@@ -20,7 +21,7 @@ import {Subject} from 'rxjs';
     '[attr.aria-orientation]': 'orientation',
   },
 })
-export class MenuDirective implements AfterContentInit {
+export class MenuDirective extends RootMenu implements AfterContentInit {
   @Input('cdkMenuOrientation') orientation: 'horizontal' | 'vertical' = 'vertical';
   /*
     Can't do:
@@ -29,9 +30,6 @@ export class MenuDirective implements AfterContentInit {
 
     We register child buttons with their menu
    */
-  children: Array<MenuButtonDirective> = new Array<MenuButtonDirective>();
-
-  private _keyManager: FocusKeyManager<MenuButtonDirective>;
 
   closeEventEmitter = new Subject<void>();
   tabEventEmitter = new Subject<void>();
@@ -43,6 +41,7 @@ export class MenuDirective implements AfterContentInit {
     private _element: ElementRef,
     private fm: FocusMonitor
   ) {
+    super();
     fm.monitor(_element);
     _parent.registerChildMenu(this);
   }
@@ -100,14 +99,7 @@ export class MenuDirective implements AfterContentInit {
   }
 
   registerChild(child: MenuButtonDirective) {
-    child.mouseEnterEmitter.subscribe((element: MenuButtonDirective) => {
-      this.children.forEach((child) => {
-        if (child !== element) {
-          child.closeMenu();
-        }
-      });
-    });
-    this.children.push(child);
+    super.registerChild(child);
     child.focusEventEmitter.subscribe((c) => this.focusEventEmitter.next(c));
   }
 }

@@ -10,6 +10,7 @@ import {
 import {FocusKeyManager, FocusMonitor} from '@angular/cdk/a11y';
 import {MenuButtonDirective} from './menu-button.directive';
 import {SPACE, hasModifierKey} from '@angular/cdk/keycodes';
+import {RootMenu} from './menu';
 
 /*
   TODO
@@ -31,17 +32,15 @@ import {SPACE, hasModifierKey} from '@angular/cdk/keycodes';
     '[attr.aria-expanded]': 'hasOpenChild()',
   },
 })
-export class MenuBarDirective implements AfterContentInit {
+export class MenuBarDirective extends RootMenu implements AfterContentInit {
   // according to the aria spec, menu bars have horizontal default orientation
   @Input('cdkMenuBarOrientation') orientation: 'horizontal' | 'vertical' = 'horizontal';
 
-  private _children: Array<MenuButtonDirective> = new Array<MenuButtonDirective>();
-  private _keyManager: FocusKeyManager<MenuButtonDirective>;
   private _ariaActivedescendant: string | null = null;
-  previousFocused: MenuButtonDirective = null;
 
   // TODO key manager
   constructor(private _element: ElementRef, private fm: FocusMonitor) {
+    super();
     fm.monitor(_element);
   }
 
@@ -53,29 +52,18 @@ export class MenuBarDirective implements AfterContentInit {
   }
 
   ngAfterContentInit() {
-    this._keyManager = new FocusKeyManager(this._children)
+    this._keyManager = new FocusKeyManager(this.children)
       .withWrap()
       // TODO use bidi to determine this
       .withHorizontalOrientation('ltr');
   }
 
   registerChild(child: MenuButtonDirective) {
-    child.mouseEnterEmitter.subscribe((element: MenuButtonDirective) => {
-      this._children.forEach((child) => {
-        if (child !== element) {
-          child.closeMenu();
-        }
-      });
-    });
-    this._children.push(child);
+    super.registerChild(child);
 
     child.focusEventEmitter.subscribe((c) => {
       this._ariaActivedescendant = c.id();
     });
-  }
-
-  hasOpenChild() {
-    return this._children.map((c) => c.isOpen()).includes(true);
   }
 
   keydown(event: KeyboardEvent) {
