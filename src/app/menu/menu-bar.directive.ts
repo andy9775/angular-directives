@@ -1,11 +1,19 @@
-import {Directive, Input, AfterContentInit, QueryList, Renderer2, ElementRef} from '@angular/core';
+import {
+  Directive,
+  Input,
+  AfterContentInit,
+  QueryList,
+  Renderer2,
+  ElementRef,
+  Optional,
+} from '@angular/core';
 import {FocusKeyManager, FocusMonitor} from '@angular/cdk/a11y';
 import {MenuButtonDirective} from './menu-button.directive';
 import {SPACE, hasModifierKey} from '@angular/cdk/keycodes';
 
 /*
   TODO
-    aria-haspopup?
+    aria-label? - up to the user
     aria-expanded?
 */
 @Directive({

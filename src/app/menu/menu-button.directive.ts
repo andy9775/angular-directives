@@ -20,6 +20,7 @@ import {FocusableOption, FocusMonitor} from '@angular/cdk/a11y';
         TODO
           aria-controls
           disabled
+          aria-label - up to the user?
 
           id??
       */
@@ -32,15 +33,23 @@ import {FocusableOption, FocusMonitor} from '@angular/cdk/a11y';
     '(mouseenter)': 'mouseEnter()',
     '(click)': 'onClick()',
     // a11y
-    role: 'menuitem',
+    '[attr.role]': 'role',
     type: 'button', // necessary ??
     // only has 0 tab index if focused and is a button inside the menuBar
     '[tabindex]': 'isFocused && !!_parentMenu ? "0" : "-1"', // check if disabled
     '[attr.aria-haspopup]': '!!templateRef ? "menu" : "false"', // only if it has a ref??
     '[attr.aria-expanded]': '!!_overlayRef',
+    '[attr.aria-checked]': 'null',
   },
 })
 export class MenuButtonDirective implements FocusableOption {
+  // TODO upon clicking a button, the menu should track the last clicked
+  // which can track radio/checkbox logic - it should also set aria-checked
+  // which can be set in the parent menu
+  // implementation can be to get the currently checked button from the parent
+  // and see if that is this button (or parentMenu.isChecked(menButton) )
+  @Input() role: 'menuitem' | 'menuitemradio' | 'menuitemcheckbox' = 'menuitem';
+
   @Input('cdkTriggerFor') templateRef: MenuPanelDirective;
   private _overlayRef: OverlayRef;
   mouseEnterEmitter = new Subject();
@@ -55,6 +64,8 @@ export class MenuButtonDirective implements FocusableOption {
     private _element: ElementRef,
     private _viewContainer: ViewContainerRef,
     private fm: FocusMonitor,
+    // TODO use interface and not specific type. Interface should have register and isChecked
+    // methods and listen to clicked events (or extend from base class)
     // if not null this button is within a sub-menu (hacky)
     @Optional() private _parentMenu?: MenuDirective,
     @Optional() private _parentMenuBar?: MenuBarDirective

@@ -17,7 +17,6 @@ import {Subject} from 'rxjs';
     // '(keydown)': 'test()',
     // a11y
     role: 'menu',
-    '[tabindex]': '-1',
     '[attr.aria-orientation]': 'orientation',
   },
 })
