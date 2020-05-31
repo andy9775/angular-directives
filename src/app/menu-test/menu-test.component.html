@@ -37,31 +37,45 @@
 </style>
 
 <ul cdkMenuBar>
-  <li><a id="file_button" [cdkTriggerFor]="file">File</a></li>
-  <li><a id="edit_button" [cdkTriggerFor]="edit">Edit</a></li>
+  <li><a id="file_button" [cdkTriggerFor]="about">About</a></li>
+  <li><a id="edit_button" [cdkTriggerFor]="admissions">Admissions</a></li>
 </ul>
 
 <!-- use panel to get reference to child cdkMenu -->
-<ng-template cdkMenuPanel #file="cdkMenuPanel">
+<ng-template cdkMenuPanel #about="cdkMenuPanel">
   <ul cdkMenu>
-    <li role="none"><a id="open_with_button" [cdkTriggerFor]="open">Open with...</a></li>
-    <li role="none"><a id="quit_button" cdkMenuItem>Quit</a></li>
+    <li role="none"><a id="quit_button" cdkMenuItem>Overview</a></li>
+    <li role="none"><a id="quit_button" cdkMenuItem>Administration</a></li>
+    <li role="none"><a id="open_with_button" [cdkTriggerFor]="facts">Facts</a></li>
+    <li role="none"><a id="open_with_button" [cdkTriggerFor]="tours">Campus Tours</a></li>
   </ul>
 </ng-template>
 
-<ng-template cdkMenuPanel #open="cdkMenuPanel">
+<ng-template cdkMenuPanel #facts="cdkMenuPanel">
   <ul cdkMenu>
-    <li role="none"><a id="open_with_office_button" cdkMenuItem>Office</a></li>
-    <li role="none"><a id="open_with_excel_button" cdkMenuItem>Excel</a></li>
+    <li role="none"><a id="open_with_office_button" cdkMenuItem>History</a></li>
+    <li role="none"><a id="open_with_excel_button" cdkMenuItem>Current Statistics</a></li>
+    <li role="none"><a id="open_with_excel_button" cdkMenuItem>Awards</a></li>
   </ul>
 </ng-template>
 
-<ng-template cdkMenuPanel #edit="cdkMenuPanel">
+<ng-template cdkMenuPanel #tours="cdkMenuPanel">
   <ul cdkMenu>
-    <li role="none"><a id="edit_clear_button" cdkMenuItem>Clear</a></li>
-    <li role="none"><a id="edit_save_button" cdkMenuItem>Save</a></li>
+    <li role="none"><a id="edit_clear_button" cdkMenuItem>For prospective students</a></li>
+    <li role="none"><a id="edit_save_button" cdkMenuItem>For alumni</a></li>
+    <li role="none"><a id="edit_save_button" cdkMenuItem>For visitors</a></li>
   </ul>
 </ng-template>
+
+<ng-template cdkMenuPanel #admissions="cdkMenuPanel">
+  <ul cdkMenu>
+    <li role="none"><a id="edit_clear_button" cdkMenuItem>Apply</a></li>
+    <li role="none"><a id="edit_save_button" cdkMenuItem>Sign up</a></li>
+  </ul>
+</ng-template>
+<br />
+<br />
+<br />
 <br />
 <br />
 <br />
