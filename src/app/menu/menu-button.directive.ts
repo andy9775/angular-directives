@@ -41,6 +41,7 @@ import {FocusableOption, FocusMonitor} from '@angular/cdk/a11y';
     '[attr.aria-haspopup]': '!!templateRef ? "menu" : "false"', // only if it has a ref??
     '[attr.aria-expanded]': '!!_overlayRef',
     '[attr.aria-checked]': 'null',
+    '[attr.aria-disabled]': 'disabled.toString()',
   },
 })
 export class MenuButtonDirective implements FocusableOption {
@@ -59,6 +60,10 @@ export class MenuButtonDirective implements FocusableOption {
   focusEventEmitter = new Subject<MenuButtonDirective>();
 
   isFocused = false;
+
+  get disabled() {
+    return this._element.nativeElement.getAttribute('disabled') || false;
+  }
 
   constructor(
     private _overlay: Overlay,
