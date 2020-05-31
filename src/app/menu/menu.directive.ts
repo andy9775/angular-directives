@@ -9,6 +9,7 @@ import {RootMenu} from './menu';
 /*
   TODO
     aria-label (based on the connected button)
+    lablled by, the button or has aria-label provided
 */
 @Directive({
   selector: '[cdkMenu]',

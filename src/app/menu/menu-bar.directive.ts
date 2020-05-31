@@ -14,7 +14,7 @@ import {RootMenu} from './menu';
 
 /*
   TODO
-    aria-label? - up to the user
+    aria-label/lablledby? - up to the user
     aria-expanded?
 */
 @Directive({
