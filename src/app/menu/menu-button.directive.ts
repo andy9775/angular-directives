@@ -39,7 +39,7 @@ import {FocusableOption, FocusMonitor} from '@angular/cdk/a11y';
     // only has 0 tab index if focused and is a button inside the menuBar
     '[tabindex]': 'isFocused && !!_parentMenu ? "0" : "-1"', // check if disabled
     '[attr.aria-haspopup]': '!!templateRef ? "menu" : "false"', // only if it has a ref??
-    '[attr.aria-expanded]': '!!_overlayRef',
+    '[attr.aria-expanded]': '!!templateRef ? !!_overlayRef : null',
     '[attr.aria-checked]': 'null',
     '[attr.aria-disabled]': 'disabled.toString()',
   },
