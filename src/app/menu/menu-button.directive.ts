@@ -34,7 +34,8 @@ import {FocusableOption, FocusMonitor} from '@angular/cdk/a11y';
     // a11y
     role: 'menuitem',
     type: 'button', // necessary ??
-    '[tabindex]': 'isFocused ? "0" : "-1"', // check if disabled
+    // only has 0 tab index if focused and is a button inside the menuBar
+    '[tabindex]': 'isFocused && !!_parentMenu ? "0" : "-1"', // check if disabled
     '[attr.aria-haspopup]': '!!templateRef ? "menu" : "false"', // only if it has a ref??
     '[attr.aria-expanded]': '!!_overlayRef',
   },
@@ -44,6 +45,7 @@ export class MenuButtonDirective implements FocusableOption {
   private _overlayRef: OverlayRef;
   mouseEnterEmitter = new Subject();
   closeEventEmitter = new Subject();
+  tabEventEmitter = new Subject();
   focusEventEmitter = new Subject<MenuButtonDirective>();
 
   isFocused = false;
@@ -104,6 +106,10 @@ export class MenuButtonDirective implements FocusableOption {
       if (this.templateRef.child) {
         this.templateRef.child.closeEventEmitter.subscribe(() => {
           this.closeMenu();
+        });
+        this.templateRef.child.tabEventEmitter.subscribe(() => {
+          this.closeMenu();
+          this.tabEventEmitter.next();
         });
       }
 

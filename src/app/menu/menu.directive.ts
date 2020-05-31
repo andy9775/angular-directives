@@ -2,7 +2,7 @@ import {Directive, Input, AfterContentInit, ElementRef, AfterViewInit} from '@an
 import {MenuPanelDirective} from './menu-panel.directive';
 import {MenuButtonDirective} from './menu-button.directive';
 import {FocusKeyManager, FocusMonitor} from '@angular/cdk/a11y';
-import {SPACE, LEFT_ARROW, ESCAPE, RIGHT_ARROW} from '@angular/cdk/keycodes';
+import {SPACE, LEFT_ARROW, ESCAPE, RIGHT_ARROW, TAB} from '@angular/cdk/keycodes';
 import {Subject} from 'rxjs';
 
 /*
@@ -17,7 +17,7 @@ import {Subject} from 'rxjs';
     // '(keydown)': 'test()',
     // a11y
     role: 'menu',
-    '[tabindex]': '0',
+    '[tabindex]': '-1',
     '[attr.aria-orientation]': 'orientation',
   },
 })
@@ -34,7 +34,8 @@ export class MenuDirective implements AfterContentInit {
 
   private _keyManager: FocusKeyManager<MenuButtonDirective>;
 
-  closeEventEmitter = new Subject();
+  closeEventEmitter = new Subject<void>();
+  tabEventEmitter = new Subject<void>();
   focusEventEmitter = new Subject<MenuButtonDirective>();
 
   // TODO key manager
@@ -58,6 +59,10 @@ export class MenuDirective implements AfterContentInit {
           // this._element.nativeElement.focus();
           this._keyManager.activeItem.focus();
         });
+        this._keyManager.activeItem.tabEventEmitter.subscribe(() => {
+          // this._element.nativeElement.focus();
+          this.tabEventEmitter.next();
+        });
 
         if (this._keyManager.activeItem.templateRef.child) {
           this._keyManager.activeItem.templateRef.child.focusFirstItem();
@@ -77,6 +82,9 @@ export class MenuDirective implements AfterContentInit {
             if the top most (part of menu bar) allow left arrow (or right without sub) to toggle
             to next/previous sub-menu
          */
+      case TAB:
+        this.tabEventEmitter.next();
+        break;
       default:
         this._keyManager.onKeydown(event);
     }
