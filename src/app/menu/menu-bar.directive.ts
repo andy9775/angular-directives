@@ -12,6 +12,7 @@ import {SPACE, hasModifierKey} from '@angular/cdk/keycodes';
   selector: '[appMenuBar], [cdkMenuBar]',
   exportAs: 'cdkMenuBar',
   host: {
+    '(focus)': 'onFocus()',
     '(keydown)': 'keydown($event)',
     role: 'menubar',
     // '[tabindex]': 'hasOpenChild() ? -1 : 0',
@@ -34,6 +35,13 @@ export class MenuBarDirective implements AfterContentInit {
   // TODO key manager
   constructor(private _element: ElementRef, private fm: FocusMonitor) {
     fm.monitor(_element);
+  }
+
+  onFocus() {
+    if (!this._keyManager.activeItem) {
+      this._keyManager.setFirstItemActive();
+    }
+    this._keyManager.activeItem.focus();
   }
 
   ngAfterContentInit() {
@@ -69,10 +77,6 @@ export class MenuBarDirective implements AfterContentInit {
       case SPACE:
         event.preventDefault();
         this._keyManager.activeItem.onClick();
-
-        this._keyManager.activeItem.closeEventEmitter.subscribe(() => {
-          this._element.nativeElement.focus();
-        });
 
         if (this._keyManager.activeItem.templateRef.child) {
           this._keyManager.activeItem.templateRef.child.focusFirstItem();
