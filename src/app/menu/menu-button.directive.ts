@@ -1,14 +1,4 @@
-import {
-  Directive,
-  ElementRef,
-  Input,
-  ViewContainerRef,
-  Optional,
-  ViewChildren,
-  QueryList,
-  Renderer2,
-  Inject,
-} from '@angular/core';
+import {Directive, ElementRef, Input, ViewContainerRef, Optional} from '@angular/core';
 import {Overlay, OverlayRef} from '@angular/cdk/overlay';
 import {TemplatePortal} from '@angular/cdk/portal';
 import {MenuPanelDirective} from './menu-panel.directive';
@@ -19,8 +9,6 @@ import {FocusableOption, FocusMonitor} from '@angular/cdk/a11y';
 
 /*
         TODO
-          aria-controls
-          disabled
           aria-label - up to the user?
 
           id??
@@ -42,6 +30,7 @@ import {FocusableOption, FocusMonitor} from '@angular/cdk/a11y';
     '[attr.aria-expanded]': '!!templateRef ? !!_overlayRef : null',
     '[attr.aria-checked]': 'null',
     '[attr.aria-disabled]': 'disabled.toString()',
+    '[attr.aria-controls]': '!!templateRef && !!templateRef.child ? templateRef.child.id() : null',
   },
 })
 export class MenuButtonDirective implements FocusableOption {
@@ -134,6 +123,8 @@ export class MenuButtonDirective implements FocusableOption {
       this.templateRef.child.focusEventEmitter.subscribe((c) => {
         this.focusEventEmitter.next(c);
       });
+
+      this.templateRef.child.lablledBy = this.id();
     }
   }
 

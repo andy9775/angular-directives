@@ -1,12 +1,4 @@
-import {
-  Directive,
-  Input,
-  AfterContentInit,
-  QueryList,
-  Renderer2,
-  ElementRef,
-  Optional,
-} from '@angular/core';
+import {Directive, Input, AfterContentInit, ElementRef} from '@angular/core';
 import {FocusKeyManager, FocusMonitor} from '@angular/cdk/a11y';
 import {MenuButtonDirective} from './menu-button.directive';
 import {SPACE, hasModifierKey} from '@angular/cdk/keycodes';
@@ -14,8 +6,7 @@ import {RootMenu} from './menu';
 
 /*
   TODO
-    aria-label/lablledby? - up to the user
-    aria-expanded?
+    aria-label/lablledby? - up to the user?
 */
 @Directive({
   selector: '[appMenuBar], [cdkMenuBar]',
@@ -28,7 +19,7 @@ import {RootMenu} from './menu';
     '[tabindex]': '0',
     '[attr.aria-orientation]': 'orientation',
     // should aria-activedescendant be un-set at some point?
-    '[attr.aria-activedescendant]': '_ariaActivedescendant',
+    // '[attr.aria-activedescendant]': '_ariaActivedescendant',
     '[attr.aria-expanded]': 'hasOpenChild()',
   },
 })

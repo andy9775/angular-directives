@@ -2,14 +2,13 @@ import {Directive, Input, AfterContentInit, ElementRef, AfterViewInit} from '@an
 import {MenuPanelDirective} from './menu-panel.directive';
 import {MenuButtonDirective} from './menu-button.directive';
 import {FocusKeyManager, FocusMonitor} from '@angular/cdk/a11y';
-import {SPACE, LEFT_ARROW, ESCAPE, RIGHT_ARROW, TAB} from '@angular/cdk/keycodes';
+import {SPACE, ESCAPE, TAB} from '@angular/cdk/keycodes';
 import {Subject} from 'rxjs';
 import {RootMenu} from './menu';
 
 /*
   TODO
-    aria-label (based on the connected button)
-    lablled by, the button or has aria-label provided
+    aria-label (provided by user)
 */
 @Directive({
   selector: '[cdkMenu]',
@@ -20,6 +19,7 @@ import {RootMenu} from './menu';
     // a11y
     role: 'menu',
     '[attr.aria-orientation]': 'orientation',
+    '[attr.aria-lablledby]': 'lablledBy',
   },
 })
 export class MenuDirective extends RootMenu implements AfterContentInit {
@@ -35,6 +35,8 @@ export class MenuDirective extends RootMenu implements AfterContentInit {
   closeEventEmitter = new Subject<void>();
   tabEventEmitter = new Subject<void>();
   focusEventEmitter = new Subject<MenuButtonDirective>();
+
+  lablledBy: string | null = null;
 
   // TODO key manager
   constructor(
@@ -102,5 +104,10 @@ export class MenuDirective extends RootMenu implements AfterContentInit {
   registerChild(child: MenuButtonDirective) {
     super.registerChild(child);
     child.focusEventEmitter.subscribe((c) => this.focusEventEmitter.next(c));
+  }
+
+  id(): string | null {
+    // TODO generate a sequential internal id and use either that or the provided id?
+    return this._element.nativeElement.getAttribute('id');
   }
 }
