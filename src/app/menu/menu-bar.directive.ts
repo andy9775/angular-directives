@@ -1,7 +1,16 @@
 import {Directive, Input, AfterContentInit, ElementRef} from '@angular/core';
 import {FocusKeyManager, FocusMonitor} from '@angular/cdk/a11y';
 import {MenuButtonDirective} from './menu-button.directive';
-import {SPACE, hasModifierKey} from '@angular/cdk/keycodes';
+import {
+  SPACE,
+  hasModifierKey,
+  LEFT_ARROW,
+  RIGHT_ARROW,
+  ESCAPE,
+  DOWN_ARROW,
+  UP_ARROW,
+} from '@angular/cdk/keycodes';
+import {first} from 'rxjs/operators';
 import {RootMenu} from './menu';
 
 /*
@@ -76,16 +85,11 @@ export class MenuBarDirective extends RootMenu implements AfterContentInit {
     });
     child.keyboardEventEmitter.subscribe((e) => {
       this._keyManager.onKeydown(e);
-      console.log('right wrrow');
       setTimeout(() => {
         // ERROR fix me - the order of focused events is off
         // without timeout it focuses incorrectly
         this._keyManager.activeItem.focus();
         this._keyManager.activeItem.onClick();
-        console.log(this._keyManager.activeItem.templateRef);
-        if (this._keyManager.activeItem.templateRef.child) {
-          this._keyManager.activeItem.templateRef.child.focusFirstItem();
-        }
       }, 0);
     });
   }
@@ -94,6 +98,18 @@ export class MenuBarDirective extends RootMenu implements AfterContentInit {
     const {keyCode} = event;
 
     switch (keyCode) {
+      case DOWN_ARROW:
+      case UP_ARROW:
+        event.preventDefault();
+        if (!this._keyManager.activeItem.isOpen()) {
+          this._keyManager.activeItem.onClick();
+        }
+        if (this._keyManager.activeItem.templateRef.child) {
+          keyCode === DOWN_ARROW
+            ? this._keyManager.activeItem.templateRef.child.focusFirstItem()
+            : this._keyManager.activeItem.templateRef.child.focusLastItem();
+        }
+        break;
       case SPACE:
         event.preventDefault();
         this._keyManager.activeItem.onClick();
@@ -101,6 +117,22 @@ export class MenuBarDirective extends RootMenu implements AfterContentInit {
           this._keyManager.activeItem.templateRef.child.focusFirstItem();
         }
         break;
+
+      case LEFT_ARROW:
+      case RIGHT_ARROW:
+        const prev = this._keyManager.activeItem;
+        this._keyManager.onKeydown(event);
+        if (prev.isOpen()) {
+          prev.closeMenu();
+          this._keyManager.activeItem.focus();
+          this._keyManager.activeItem.onClick();
+        }
+
+        break;
+      case ESCAPE:
+        if (this._keyManager.activeItem.isOpen()) {
+          this._keyManager.activeItem.closeMenu();
+        }
       default:
         this._keyManager.onKeydown(event);
     }

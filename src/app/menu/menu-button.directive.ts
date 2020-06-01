@@ -87,7 +87,7 @@ export class MenuButtonDirective implements FocusableOption {
     this._element.nativeElement.focus();
     this.isFocused = true;
     // this.focusEventEmitter.next(this);
-    console.log('focused: ', this.id());
+    // console.log('focused: ', this.id());
   }
 
   checked() {
