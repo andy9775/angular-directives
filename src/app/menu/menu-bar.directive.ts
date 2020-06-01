@@ -19,7 +19,8 @@ import {RootMenu} from './menu';
     '[tabindex]': '0',
     '[attr.aria-orientation]': 'orientation',
     // should aria-activedescendant be un-set at some point?
-    '[attr.aria-activedescendant]': '_ariaActivedescendant',
+    // is this needed? or can we use roving tab index??
+    // '[attr.aria-activedescendant]': '_ariaActivedescendant',
     '[attr.aria-expanded]': 'hasOpenChild()',
   },
 })

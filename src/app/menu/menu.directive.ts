@@ -2,7 +2,7 @@ import {Directive, Input, AfterContentInit, ElementRef, AfterViewInit} from '@an
 import {MenuPanelDirective} from './menu-panel.directive';
 import {MenuButtonDirective} from './menu-button.directive';
 import {FocusKeyManager, FocusMonitor} from '@angular/cdk/a11y';
-import {SPACE, ESCAPE, TAB} from '@angular/cdk/keycodes';
+import {SPACE, ESCAPE, TAB, LEFT_ARROW, RIGHT_ARROW} from '@angular/cdk/keycodes';
 import {Subject} from 'rxjs';
 import {RootMenu} from './menu';
 
@@ -35,6 +35,7 @@ export class MenuDirective extends RootMenu implements AfterContentInit {
   closeEventEmitter = new Subject<void>();
   tabEventEmitter = new Subject<void>();
   focusEventEmitter = new Subject<MenuButtonDirective>();
+  keyboardEventEmitter = new Subject<KeyboardEvent>();
 
   lablledBy: string | null = null;
 
@@ -52,25 +53,23 @@ export class MenuDirective extends RootMenu implements AfterContentInit {
   keydown(event: KeyboardEvent) {
     const {keyCode} = event;
     switch (keyCode) {
-      case SPACE:
-        event.preventDefault();
-        this._keyManager.activeItem.onClick();
-
-        this._keyManager.activeItem.closeEventEmitter.subscribe(() => {
-          // this._element.nativeElement.focus();
-          this._keyManager.activeItem.focus();
-        });
-        this._keyManager.activeItem.tabEventEmitter.subscribe(() => {
-          // this._element.nativeElement.focus();
-          this.tabEventEmitter.next();
-        });
-
-        if (this._keyManager.activeItem.templateRef.child) {
-          this._keyManager.activeItem.templateRef.child.focusFirstItem();
-        }
-        break;
       case ESCAPE:
         this.closeEventEmitter.next();
+        break;
+      case LEFT_ARROW:
+        // TODO if top level menu, toggle to next
+        console.log('left: ', this.id());
+        break;
+      case RIGHT_ARROW:
+        if (this._keyManager.activeItem.hasSubmenu()) {
+          this._openSubMenu();
+        } else {
+          this.keyboardEventEmitter.next(event);
+        }
+        break;
+      case SPACE:
+        event.preventDefault();
+        this._openSubMenu();
         break;
       /*
           TODO
@@ -88,6 +87,23 @@ export class MenuDirective extends RootMenu implements AfterContentInit {
         break;
       default:
         this._keyManager.onKeydown(event);
+    }
+  }
+
+  private _openSubMenu() {
+    this._keyManager.activeItem.onClick();
+
+    this._keyManager.activeItem.closeEventEmitter.subscribe(() => {
+      // this._element.nativeElement.focus();
+      this._keyManager.activeItem.focus();
+    });
+    this._keyManager.activeItem.tabEventEmitter.subscribe(() => {
+      // this._element.nativeElement.focus();
+      this.tabEventEmitter.next();
+    });
+
+    if (this._keyManager.activeItem.templateRef.child) {
+      this._keyManager.activeItem.templateRef.child.focusFirstItem();
     }
   }
 

@@ -37,8 +37,8 @@
 </style>
 
 <ul cdkMenuBar>
-  <li><a id="file_button" [cdkTriggerFor]="about">About</a></li>
-  <li><a id="edit_button" [cdkTriggerFor]="admissions">Admissions</a></li>
+  <li role="none"><a id="file_button" [cdkTriggerFor]="about">About</a></li>
+  <li role="none"><a id="edit_button" [cdkTriggerFor]="admissions">Admissions</a></li>
 </ul>
 
 <!-- use panel to get reference to child cdkMenu -->
@@ -52,7 +52,7 @@
 </ng-template>
 
 <ng-template cdkMenuPanel #facts="cdkMenuPanel">
-  <ul cdkMenu>
+  <ul cdkMenu id="facts_menu">
     <li role="none"><a id="history_button" cdkMenuItem>History</a></li>
     <li role="none"><a id="stats_button" cdkMenuItem>Current Statistics</a></li>
     <li role="none"><a id="awards_button" cdkMenuItem>Awards</a></li>
@@ -60,7 +60,7 @@
 </ng-template>
 
 <ng-template cdkMenuPanel #tours="cdkMenuPanel">
-  <ul cdkMenu>
+  <ul cdkMenu id="tours_menu">
     <li role="none"><a id="students_button" cdkMenuItem>For prospective students</a></li>
     <li role="none"><a id="alum_button" cdkMenuItem>For alumni</a></li>
     <li role="none"><a id="visitors_button" cdkMenuItem>For visitors</a></li>
@@ -68,7 +68,7 @@
 </ng-template>
 
 <ng-template cdkMenuPanel #admissions="cdkMenuPanel">
-  <ul cdkMenu>
+  <ul cdkMenu id="admissions_menu">
     <li role="none"><a id="apply_button" cdkMenuItem>Apply</a></li>
     <li role="none"><a id="sign_up_button" cdkMenuItem>Sign up</a></li>
   </ul>

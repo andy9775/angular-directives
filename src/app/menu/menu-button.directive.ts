@@ -100,6 +100,10 @@ export class MenuButtonDirective implements FocusableOption {
     return !!this._overlayRef;
   }
 
+  hasSubmenu() {
+    return !!this.templateRef;
+  }
+
   private _openMenu() {
     if (!!this.templateRef) {
       this._overlayRef = this._overlay.create({
