@@ -142,6 +142,11 @@ export class MenuButtonDirective implements FocusableOption {
               this.keyboardEventEmitter.next(e);
             }
             this.closeMenu();
+            break;
+          case RIGHT_ARROW:
+            this.keyboardEventEmitter.next(e);
+            this.closeMenu();
+            break;
         }
       });
     }

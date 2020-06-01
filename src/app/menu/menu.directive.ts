@@ -120,6 +120,7 @@ export class MenuDirective extends RootMenu implements AfterContentInit {
   registerChild(child: MenuButtonDirective) {
     super.registerChild(child);
     child.focusEventEmitter.subscribe((c) => this.focusEventEmitter.next(c));
+    child.keyboardEventEmitter.subscribe((e) => this.keyboardEventEmitter.next(e));
   }
 
   id(): string | null {

@@ -58,6 +58,7 @@ export class MenuBarDirective extends RootMenu implements AfterContentInit {
     });
     child.keyboardEventEmitter.subscribe((e) => {
       this._keyManager.onKeydown(e);
+      console.log('right wrrow');
       setTimeout(() => {
         // ERROR fix me - the order of focused events is off
         // without timeout it focuses incorrectly
