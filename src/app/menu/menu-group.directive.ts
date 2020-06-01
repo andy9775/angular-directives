@@ -1,6 +1,7 @@
 import {Directive, TemplateRef, ContentChild, Input} from '@angular/core';
 import {MenuDirective} from './menu.directive';
 import {MenuButtonDirective} from './menu-button.directive';
+import {RadioGroupSelectionService} from './radio-group-selection.service';
 
 let _uniqueIdCounter = 0;
 /*
@@ -21,13 +22,13 @@ let _uniqueIdCounter = 0;
 export class MenuGroupDirective {
   @Input('cdkMenuRadioGroup') _id = `menu-radio-group-${_uniqueIdCounter++}`;
 
-  private _activeChild: MenuButtonDirective;
+  constructor(private _selectionService: RadioGroupSelectionService) {}
 
   setActiveChild(c: MenuButtonDirective) {
-    this._activeChild = c;
+    this._selectionService.setActiveChild(this._id, c._id);
   }
 
   isActiveChild(c: MenuButtonDirective) {
-    return c === this._activeChild;
+    return this._selectionService.isActiveChild(this._id, c._id);
   }
 }

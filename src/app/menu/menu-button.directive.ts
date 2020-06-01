@@ -54,6 +54,8 @@ export class MenuButtonDirective implements FocusableOption {
 
   isFocused = false;
 
+  _id: string;
+
   private _isChecked = false;
 
   get disabled() {
