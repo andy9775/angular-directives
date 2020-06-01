@@ -100,14 +100,13 @@ export class MenuBarDirective extends RootMenu implements AfterContentInit {
     switch (keyCode) {
       case DOWN_ARROW:
       case UP_ARROW:
-        event.preventDefault();
-        if (!this._keyManager.activeItem.isOpen()) {
-          this._keyManager.activeItem.onClick();
-        }
-        if (this._keyManager.activeItem.templateRef.child) {
-          keyCode === DOWN_ARROW
-            ? this._keyManager.activeItem.templateRef.child.focusFirstItem()
-            : this._keyManager.activeItem.templateRef.child.focusLastItem();
+        if (this._keyManager.activeItem.isOpen()) {
+          event.preventDefault();
+          if (this._keyManager.activeItem.templateRef.child) {
+            keyCode === DOWN_ARROW
+              ? this._keyManager.activeItem.templateRef.child.focusFirstItem()
+              : this._keyManager.activeItem.templateRef.child.focusLastItem();
+          }
         }
         break;
       case SPACE:
