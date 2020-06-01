@@ -107,9 +107,11 @@ export class MenuBarDirective extends RootMenu implements AfterContentInit {
               ? this._keyManager.activeItem.templateRef.child.focusFirstItem()
               : this._keyManager.activeItem.templateRef.child.focusLastItem();
           }
-        } else if (keyCode === DOWN_ARROW) {
+        } else {
           this._keyManager.activeItem.onClick();
-          this._keyManager.activeItem.templateRef.child.focusFirstItem();
+          keyCode === DOWN_ARROW
+            ? this._keyManager.activeItem.templateRef.child.focusFirstItem()
+            : this._keyManager.activeItem.templateRef.child.focusLastItem();
         }
         break;
       case SPACE:
