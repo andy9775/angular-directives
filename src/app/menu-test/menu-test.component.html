@@ -36,7 +36,8 @@
     background-color: rgba(0, 0, 0, 0.2);
   }
   [cdkmenu],
-  [cdkMenuGroup] {
+  [cdkMenuRadioGroup],
+  ul[role='group'] {
     display: flex;
     flex-direction: column;
     min-width: 100px;
@@ -102,7 +103,7 @@
     <li role="none">
       <div class="sep">Font Style</div>
       <!-- first group -->
-      <ul cdkMenuGroup="font_style">
+      <ul role="group">
         <li role="none"><a role="menuitemcheckbox" id="bold_button" cdkMenuItem>Bold</a></li>
         <li role="none">
           <a role="menuitemcheckbox" id="underline_button" cdkMenuItem>Underline</a>
@@ -115,7 +116,7 @@
     <li role="none">
       <div class="sep">Font Size</div>
       <!-- second group -->
-      <ul cdkMenuGroup="font_size">
+      <ul cdkMenuRadioGroup="font_size">
         <li role="none"><a role="menuitemradio" id="small_button" cdkMenuItem>Small</a></li>
         <li role="none"><a role="menuitemradio" id="large_button" cdkMenuItem>Large</a></li>
       </ul>

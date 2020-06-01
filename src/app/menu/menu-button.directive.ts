@@ -30,7 +30,7 @@ import {MenuGroupDirective} from './menu-group.directive';
     '[tabindex]': '(isFocused && !!_parentMenu) ? "0" : "-1"', // check if disabled
     '[attr.aria-haspopup]': '!!templateRef ? "menu" : "false"', // only if it has a ref??
     '[attr.aria-expanded]': '!!templateRef ? !!_overlayRef : null',
-    '[attr.aria-checked]': 'checked()',
+    '[attr.aria-checked]': '_checked()',
     '[attr.aria-disabled]': 'disabled.toString()',
     '[attr.aria-controls]': '!!templateRef && !!templateRef.child ? templateRef.child.id() : null',
   },
@@ -90,15 +90,14 @@ export class MenuButtonDirective implements FocusableOption {
     // console.log('focused: ', this.id());
   }
 
-  checked() {
-    switch (this.role) {
-      case 'menuitemradio':
-        return this._group.isActiveChild(this);
-      case 'menuitemcheckbox':
-        return this._isChecked;
-      default:
-        return null;
+  private _checked() {
+    if (!!this._group && this.role === 'menuitemradio') {
+      return this._group.isActiveChild(this);
+    } else if (this.role === 'menuitemcheckbox') {
+      return this._isChecked;
     }
+
+    return null;
   }
 
   onClick() {

@@ -2,6 +2,7 @@ import {Directive, TemplateRef, ContentChild, Input} from '@angular/core';
 import {MenuDirective} from './menu.directive';
 import {MenuButtonDirective} from './menu-button.directive';
 
+let _uniqueIdCounter = 0;
 /*
 
   TODO
@@ -14,17 +15,13 @@ import {MenuButtonDirective} from './menu-button.directive';
       A required name?
  */
 @Directive({
-  selector: '[appMenuGroup], [cdkMenuGroup]',
-  exportAs: 'cdkMenuGroup',
-  host: {
-    // '(keydown)': 'keydown($event)',
-  },
+  selector: '[appMenuGroup], [cdkMenuRadioGroup]',
+  exportAs: 'cdkMenuRadioGroup',
 })
 export class MenuGroupDirective {
-  @Input('cdkMenuGroup') _id: string;
+  @Input('cdkMenuRadioGroup') _id = `menu-radio-group-${_uniqueIdCounter++}`;
 
   private _activeChild: MenuButtonDirective;
-  constructor(menu: MenuDirective) {}
 
   setActiveChild(c: MenuButtonDirective) {
     this._activeChild = c;
