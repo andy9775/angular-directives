@@ -96,9 +96,9 @@ export class MenuButtonDirective implements FocusableOption {
 
   private _checked() {
     if (!!this._group && this.role === 'menuitemradio') {
-      return this._group.isActiveChild(this);
+      return this._group.isActiveChild(this).toString();
     } else if (this.role === 'menuitemcheckbox') {
-      return this.state.isChecked(this);
+      return this.state.isChecked(this).toString();
     }
 
     return null;

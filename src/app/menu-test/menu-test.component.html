@@ -6,7 +6,8 @@
   li {
     list-style: none;
   }
-  a {
+  a,
+  [cdkmenuitem] {
     display: inline-block;
     background-color: rgba(0, 0, 0, 0.1);
     border: solid 1px black;
@@ -19,18 +20,10 @@
     padding: 4px 16px;
     border-radius: 2px;
   }
-  .sep {
-    display: inline-block;
+  li[role='separator'] {
     background-color: rgba(0, 0, 0, 0.1);
-    border: solid 1px black;
-    box-sizing: border-box;
-    text-align: center;
+    height: 10px;
     margin: 0;
-    width: 100%;
-    line-height: 16px;
-    padding: 4px 16px;
-    border-radius: 2px;
-    font-weight: bold;
   }
   a:hover {
     background-color: rgba(0, 0, 0, 0.2);
@@ -49,10 +42,10 @@
     border: solid 1px red;
     outline: none;
   }
-  a[role='menuitemradio'][aria-checked='true'] {
+  [cdkmenuitem][role='menuitemradio'][aria-checked='true'] {
     background-color: blue;
   }
-  a[role='menuitemcheckbox'][aria-checked='true'] {
+  [cdkmenuitem][role='menuitemcheckbox'][aria-checked='true'] {
     background-color: green;
   }
 </style>
@@ -61,7 +54,7 @@
   <li role="none"><a id="about_button" [cdkTriggerFor]="about">About</a></li>
   <li role="none"><a id="admissions_button" [cdkTriggerFor]="admissions">Admissions</a></li>
   <!-- for testing groups -->
-  <li role="none"><a id="style_button" [cdkTriggerFor]="styles">Styles</a></li>
+  <li role="none"><a id="style_button" [cdkTriggerFor]="styles">Style/Color</a></li>
 </ul>
 
 <!-- use panel to get reference to child cdkMenu -->
@@ -100,25 +93,16 @@
 <ng-template cdkMenuPanel #styles="cdkMenuPanel">
   <!-- root menu -->
   <ul cdkMenu id="style_menu">
+    <!-- first group -->
+    <li role="menuitemcheckbox" id="bold_button" cdkMenuItem>Bold</li>
+    <li role="menuitemcheckbox" id="italic_button" cdkMenuItem>Italic</li>
+    <li role="separator"></li>
     <li role="none">
-      <div class="sep">Font Style</div>
-      <!-- first group -->
-      <ul role="group">
-        <li role="none"><a role="menuitemcheckbox" id="bold_button" cdkMenuItem>Bold</a></li>
-        <li role="none">
-          <a role="menuitemcheckbox" id="underline_button" cdkMenuItem>Underline</a>
-        </li>
-        <li role="none">
-          <a role="menuitemcheckbox" id="italic_button" cdkMenuItem>Italic</a>
-        </li>
-      </ul>
-    </li>
-    <li role="none">
-      <div class="sep">Font Size</div>
       <!-- second group -->
       <ul cdkMenuRadioGroup="font_size">
-        <li role="none"><a role="menuitemradio" id="small_button" cdkMenuItem>Small</a></li>
-        <li role="none"><a role="menuitemradio" id="large_button" cdkMenuItem>Large</a></li>
+        <li role="menuitemradio" id="red_button" cdkMenuItem>Red</li>
+        <li role="menuitemradio" id="green_button" cdkMenuItem>Green</li>
+        <li role="menuitemradio" id="black_button" cdkMenuItem>Black</li>
       </ul>
     </li>
   </ul>
