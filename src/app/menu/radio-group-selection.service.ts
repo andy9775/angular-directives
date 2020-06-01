@@ -1,5 +1,4 @@
 import {Injectable} from '@angular/core';
-import {MenuButtonDirective} from './menu-button.directive';
 
 @Injectable({
   providedIn: 'root',

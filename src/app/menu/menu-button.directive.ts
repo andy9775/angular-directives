@@ -8,6 +8,7 @@ import {MenuBarDirective} from './menu-bar.directive';
 import {FocusableOption, FocusMonitor} from '@angular/cdk/a11y';
 import {RIGHT_ARROW, LEFT_ARROW} from '@angular/cdk/keycodes';
 import {MenuGroupDirective} from './menu-group.directive';
+import {CheckboxStateService} from './checkbox-state.service';
 
 /*
         TODO
@@ -56,8 +57,6 @@ export class MenuButtonDirective implements FocusableOption {
 
   _id: string;
 
-  private _isChecked = false;
-
   get disabled() {
     return this._element.nativeElement.getAttribute('disabled') || false;
   }
@@ -67,6 +66,9 @@ export class MenuButtonDirective implements FocusableOption {
     private _element: ElementRef,
     private _viewContainer: ViewContainerRef,
     private fm: FocusMonitor,
+    // need someway to set the initial state of the checkbox
+    // also need to emit events to update external components of changed state
+    private state: CheckboxStateService,
     // TODO use interface and not specific type. Interface should have register and isChecked
     // methods and listen to clicked events (or extend from base class)
     // if not null this button is within a sub-menu (hacky)
@@ -96,7 +98,7 @@ export class MenuButtonDirective implements FocusableOption {
     if (!!this._group && this.role === 'menuitemradio') {
       return this._group.isActiveChild(this);
     } else if (this.role === 'menuitemcheckbox') {
-      return this._isChecked;
+      return this.state.isChecked(this);
     }
 
     return null;
@@ -106,7 +108,7 @@ export class MenuButtonDirective implements FocusableOption {
     if (!!this._group) {
       this._group.setActiveChild(this);
     }
-    this._isChecked = !this._isChecked;
+    this.state.toggle(this);
     // check - do nothing if there is a child menu?
     this.isOpen() ? this.closeMenu() : this._openMenu();
   }

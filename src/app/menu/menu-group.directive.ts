@@ -3,7 +3,6 @@ import {MenuDirective} from './menu.directive';
 import {MenuButtonDirective} from './menu-button.directive';
 import {RadioGroupSelectionService} from './radio-group-selection.service';
 
-let _uniqueIdCounter = 0;
 /*
 
   TODO
@@ -20,7 +19,7 @@ let _uniqueIdCounter = 0;
   exportAs: 'cdkMenuRadioGroup',
 })
 export class MenuGroupDirective {
-  @Input('cdkMenuRadioGroup') _id = `menu-radio-group-${_uniqueIdCounter++}`;
+  @Input('cdkMenuRadioGroup') _id: string;
 
   constructor(private _selectionService: RadioGroupSelectionService) {}
 
