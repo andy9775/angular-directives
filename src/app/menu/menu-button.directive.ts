@@ -108,6 +108,13 @@ export class MenuButtonDirective implements FocusableOption {
     return !!this.templateRef;
   }
 
+  contains(el) {
+    return (
+      this._element.nativeElement.contains(el) ||
+      (this.templateRef && this.templateRef.child ? this.templateRef.child.contains(el) : false)
+    );
+  }
+
   private _openMenu() {
     if (!!this.templateRef) {
       this._overlayRef = this._overlay.create({

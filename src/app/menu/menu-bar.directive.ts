@@ -22,6 +22,7 @@ import {RootMenu} from './menu';
     // is this needed? or can we use roving tab index??
     // '[attr.aria-activedescendant]': '_ariaActivedescendant',
     '[attr.aria-expanded]': 'hasOpenChild()',
+    '(document:click)': 'doClick($event)',
   },
 })
 export class MenuBarDirective extends RootMenu implements AfterContentInit {
@@ -48,6 +49,23 @@ export class MenuBarDirective extends RootMenu implements AfterContentInit {
       .withWrap()
       // TODO use bidi to determine this
       .withHorizontalOrientation('ltr');
+  }
+
+  doClick(event: MouseEvent) {
+    if (
+      !this.children
+        .map((child) => {
+          if (child.contains(event.target)) {
+            return true;
+          }
+        })
+        .includes(true)
+    ) {
+      // TODO more performent way to do this? Perhaps have the children register for a close event
+      // emitter from each parent? Or have a service which gets injected into the appropriate
+      // listeners (children)?
+      this.children.filter((c) => c.isOpen()).forEach((c) => c.closeMenu());
+    }
   }
 
   registerChild(child: MenuButtonDirective) {
@@ -79,7 +97,6 @@ export class MenuBarDirective extends RootMenu implements AfterContentInit {
       case SPACE:
         event.preventDefault();
         this._keyManager.activeItem.onClick();
-
         if (this._keyManager.activeItem.templateRef.child) {
           this._keyManager.activeItem.templateRef.child.focusFirstItem();
         }

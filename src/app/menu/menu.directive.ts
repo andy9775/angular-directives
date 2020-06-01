@@ -71,23 +71,19 @@ export class MenuDirective extends RootMenu implements AfterContentInit {
         event.preventDefault();
         this._openSubMenu();
         break;
-      /*
-          TODO
-            right arrow:
-              if has sub-menu, open it
-              otherwise fall through
-            left arrow:
-              close this menu and go back to parent
-
-            if the top most (part of menu bar) allow left arrow (or right without sub) to toggle
-            to next/previous sub-menu
-         */
       case TAB:
         this.tabEventEmitter.next();
         break;
       default:
         this._keyManager.onKeydown(event);
     }
+  }
+
+  contains(el) {
+    return (
+      this._element.nativeElement.contains(el) ||
+      this.children.map((c) => c.contains(el)).includes(true)
+    );
   }
 
   private _openSubMenu() {
