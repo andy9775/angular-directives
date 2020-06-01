@@ -92,14 +92,14 @@
 
 <ng-template cdkMenuPanel #styles="cdkMenuPanel">
   <!-- root menu -->
-  <ul cdkMenu id="style_menu">
+  <ul cdkMenu id="style_menu" aria-label="Style/Color">
     <!-- first group -->
     <li role="menuitemcheckbox" id="bold_button" cdkMenuItem>Bold</li>
     <li role="menuitemcheckbox" id="italic_button" cdkMenuItem>Italic</li>
     <li role="separator"></li>
     <li role="none">
       <!-- second group -->
-      <ul cdkMenuRadioGroup="font_size">
+      <ul cdkMenuRadioGroup="font_size" aria-label="Text Color">
         <li role="menuitemradio" id="red_button" cdkMenuItem>Red</li>
         <li role="menuitemradio" id="green_button" cdkMenuItem>Green</li>
         <li role="menuitemradio" id="black_button" cdkMenuItem>Black</li>
