@@ -56,6 +56,19 @@ export class MenuBarDirective extends RootMenu implements AfterContentInit {
     child.focusEventEmitter.subscribe((c) => {
       this._ariaActivedescendant = c.id();
     });
+    child.keyboardEventEmitter.subscribe((e) => {
+      this._keyManager.onKeydown(e);
+      setTimeout(() => {
+        // ERROR fix me - the order of focused events is off
+        // without timeout it focuses incorrectly
+        this._keyManager.activeItem.focus();
+        this._keyManager.activeItem.onClick();
+        console.log(this._keyManager.activeItem.templateRef);
+        if (this._keyManager.activeItem.templateRef.child) {
+          this._keyManager.activeItem.templateRef.child.focusFirstItem();
+        }
+      }, 0);
+    });
   }
 
   keydown(event: KeyboardEvent) {

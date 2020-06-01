@@ -6,6 +6,7 @@ import {MenuDirective} from './menu.directive';
 import {Subject} from 'rxjs';
 import {MenuBarDirective} from './menu-bar.directive';
 import {FocusableOption, FocusMonitor} from '@angular/cdk/a11y';
+import {RIGHT_ARROW, LEFT_ARROW} from '@angular/cdk/keycodes';
 
 /*
         TODO
@@ -25,7 +26,7 @@ import {FocusableOption, FocusMonitor} from '@angular/cdk/a11y';
     '[attr.role]': 'role',
     type: 'button', // necessary ??
     // only has 0 tab index if focused and is a button inside the menuBar
-    '[tabindex]': 'isFocused && !!_parentMenu ? "0" : "-1"', // check if disabled
+    '[tabindex]': '(isFocused && !!_parentMenu) ? "0" : "-1"', // check if disabled
     '[attr.aria-haspopup]': '!!templateRef ? "menu" : "false"', // only if it has a ref??
     '[attr.aria-expanded]': '!!templateRef ? !!_overlayRef : null',
     '[attr.aria-checked]': 'null',
@@ -47,6 +48,8 @@ export class MenuButtonDirective implements FocusableOption {
   closeEventEmitter = new Subject();
   tabEventEmitter = new Subject();
   focusEventEmitter = new Subject<MenuButtonDirective>();
+
+  keyboardEventEmitter = new Subject<KeyboardEvent>();
 
   isFocused = false;
 
@@ -80,6 +83,7 @@ export class MenuButtonDirective implements FocusableOption {
     this._element.nativeElement.focus();
     this.isFocused = true;
     // this.focusEventEmitter.next(this);
+    console.log('focused: ', this.id());
   }
 
   onClick() {
@@ -129,6 +133,17 @@ export class MenuButtonDirective implements FocusableOption {
       });
 
       this.templateRef.child.lablledBy = this.id();
+
+      this.templateRef.child.keyboardEventEmitter.subscribe((e: KeyboardEvent) => {
+        const {keyCode} = e;
+        switch (keyCode) {
+          case LEFT_ARROW:
+            if (!!this._parentMenuBar) {
+              this.keyboardEventEmitter.next(e);
+            }
+            this.closeMenu();
+        }
+      });
     }
   }
 

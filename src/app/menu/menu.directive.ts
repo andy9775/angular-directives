@@ -51,14 +51,14 @@ export class MenuDirective extends RootMenu implements AfterContentInit {
   }
 
   keydown(event: KeyboardEvent) {
-    const {keyCode} = event;
+    const {keyCode} = event; // TODO don't use keyCode
     switch (keyCode) {
       case ESCAPE:
         this.closeEventEmitter.next();
         break;
       case LEFT_ARROW:
         // TODO if top level menu, toggle to next
-        console.log('left: ', this.id());
+        this.keyboardEventEmitter.next(event);
         break;
       case RIGHT_ARROW:
         if (this._keyManager.activeItem.hasSubmenu()) {
