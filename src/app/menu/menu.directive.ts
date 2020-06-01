@@ -110,7 +110,11 @@ export class MenuDirective extends RootMenu implements AfterContentInit {
 
   focusFirstItem() {
     // this._element.nativeElement.focus();
-    this._keyManager.setActiveItem(0);
+    this._keyManager.setFirstItemActive();
+  }
+
+  focusLastItem() {
+    this._keyManager.setLastItemActive();
   }
 
   registerChild(child: MenuButtonDirective) {
