@@ -7,6 +7,7 @@ import {Subject} from 'rxjs';
 import {MenuBarDirective} from './menu-bar.directive';
 import {FocusableOption, FocusMonitor} from '@angular/cdk/a11y';
 import {RIGHT_ARROW, LEFT_ARROW} from '@angular/cdk/keycodes';
+import {MenuGroupDirective} from './menu-group.directive';
 
 /*
         TODO
@@ -29,7 +30,7 @@ import {RIGHT_ARROW, LEFT_ARROW} from '@angular/cdk/keycodes';
     '[tabindex]': '(isFocused && !!_parentMenu) ? "0" : "-1"', // check if disabled
     '[attr.aria-haspopup]': '!!templateRef ? "menu" : "false"', // only if it has a ref??
     '[attr.aria-expanded]': '!!templateRef ? !!_overlayRef : null',
-    '[attr.aria-checked]': 'null',
+    '[attr.aria-checked]': 'checked()',
     '[attr.aria-disabled]': 'disabled.toString()',
     '[attr.aria-controls]': '!!templateRef && !!templateRef.child ? templateRef.child.id() : null',
   },
@@ -53,6 +54,8 @@ export class MenuButtonDirective implements FocusableOption {
 
   isFocused = false;
 
+  private _isChecked = false;
+
   get disabled() {
     return this._element.nativeElement.getAttribute('disabled') || false;
   }
@@ -66,7 +69,8 @@ export class MenuButtonDirective implements FocusableOption {
     // methods and listen to clicked events (or extend from base class)
     // if not null this button is within a sub-menu (hacky)
     @Optional() private _parentMenu?: MenuDirective,
-    @Optional() private _parentMenuBar?: MenuBarDirective
+    @Optional() private _parentMenuBar?: MenuBarDirective,
+    @Optional() private _group?: MenuGroupDirective
   ) {
     if (_parentMenu) {
       _parentMenu.registerChild(this);
@@ -86,7 +90,22 @@ export class MenuButtonDirective implements FocusableOption {
     console.log('focused: ', this.id());
   }
 
+  checked() {
+    switch (this.role) {
+      case 'menuitemradio':
+        return this._group.isActiveChild(this);
+      case 'menuitemcheckbox':
+        return this._isChecked;
+      default:
+        return null;
+    }
+  }
+
   onClick() {
+    if (!!this._group) {
+      this._group.setActiveChild(this);
+    }
+    this._isChecked = !this._isChecked;
     // check - do nothing if there is a child menu?
     this.isOpen() ? this.closeMenu() : this._openMenu();
   }

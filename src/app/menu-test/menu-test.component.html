@@ -19,10 +19,24 @@
     padding: 4px 16px;
     border-radius: 2px;
   }
+  .sep {
+    display: inline-block;
+    background-color: rgba(0, 0, 0, 0.1);
+    border: solid 1px black;
+    box-sizing: border-box;
+    text-align: center;
+    margin: 0;
+    width: 100%;
+    line-height: 16px;
+    padding: 4px 16px;
+    border-radius: 2px;
+    font-weight: bold;
+  }
   a:hover {
     background-color: rgba(0, 0, 0, 0.2);
   }
-  [cdkmenu] {
+  [cdkmenu],
+  [cdkMenuGroup] {
     display: flex;
     flex-direction: column;
     min-width: 100px;
@@ -34,11 +48,19 @@
     border: solid 1px red;
     outline: none;
   }
+  a[role='menuitemradio'][aria-checked='true'] {
+    background-color: blue;
+  }
+  a[role='menuitemcheckbox'][aria-checked='true'] {
+    background-color: green;
+  }
 </style>
 
 <ul cdkMenuBar>
   <li role="none"><a id="about_button" [cdkTriggerFor]="about">About</a></li>
   <li role="none"><a id="admissions_button" [cdkTriggerFor]="admissions">Admissions</a></li>
+  <!-- for testing groups -->
+  <li role="none"><a id="style_button" [cdkTriggerFor]="styles">Styles</a></li>
 </ul>
 
 <!-- use panel to get reference to child cdkMenu -->
@@ -73,11 +95,32 @@
     <li role="none"><a id="sign_up_button" cdkMenuItem>Sign up</a></li>
   </ul>
 </ng-template>
-<br />
-<br />
-<br />
-<br />
-<br />
-<br />
-<br />
-<button tabindex="0">other</button>
+
+<ng-template cdkMenuPanel #styles="cdkMenuPanel">
+  <!-- root menu -->
+  <ul cdkMenu id="style_menu">
+    <li role="none">
+      <div class="sep">Font Style</div>
+      <!-- first group -->
+      <ul cdkMenuGroup="font_style">
+        <li role="none"><a role="menuitemcheckbox" id="bold_button" cdkMenuItem>Bold</a></li>
+        <li role="none">
+          <a role="menuitemcheckbox" id="underline_button" cdkMenuItem>Underline</a>
+        </li>
+        <li role="none">
+          <a role="menuitemcheckbox" id="italic_button" cdkMenuItem>Italic</a>
+        </li>
+      </ul>
+    </li>
+    <li role="none">
+      <div class="sep">Font Size</div>
+      <!-- second group -->
+      <ul cdkMenuGroup="font_size">
+        <li role="none"><a role="menuitemradio" id="small_button" cdkMenuItem>Small</a></li>
+        <li role="none"><a role="menuitemradio" id="large_button" cdkMenuItem>Large</a></li>
+      </ul>
+    </li>
+  </ul>
+</ng-template>
+
+<button style="margin-top: 200px;" tabindex="0">other</button>
