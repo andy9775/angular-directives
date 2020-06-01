@@ -132,6 +132,7 @@ export class MenuBarDirective extends RootMenu implements AfterContentInit {
         if (this._keyManager.activeItem.isOpen()) {
           this._keyManager.activeItem.closeMenu();
         }
+        break;
       default:
         this._keyManager.onKeydown(event);
     }
