@@ -58,11 +58,6 @@ export class MenuBarDirective extends RootMenu implements Menu {
 
     child.keyboardEventEmitter.subscribe((e) => {
       this._keyManager.keydown(e);
-      setTimeout(() => {
-        this._keyManager.focusActiveItem();
-        // ERROR fix me - the order of focused events is off
-        // without timeout it focuses incorrectly
-      }, 0);
     });
   }
 }

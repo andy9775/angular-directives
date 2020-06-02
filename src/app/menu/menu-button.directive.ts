@@ -20,7 +20,7 @@ import {CheckboxStateService} from './checkbox-state.service';
   selector: '[appMenuButton],[cdkMenuItem], [cdkTriggerFor]',
   exportAs: 'cdkMenuItem',
   host: {
-    '(focus)': 'focusEventEmitter.next(this)',
+    // '(focus)': 'focusEventEmitter.next(this)',
     '(blur)': 'isFocused = false',
     '(mouseenter)': 'mouseEnter()',
     '(click)': 'onClick()',
@@ -87,6 +87,7 @@ export class MenuButtonDirective implements FocusableOption, ListKeyManagerOptio
     // debug to determine which element has focus
     this._element.nativeElement.focus();
     this.isFocused = true;
+    console.log('focus: ', this.id());
   }
 
   getLabel() {
@@ -164,8 +165,11 @@ export class MenuButtonDirective implements FocusableOption, ListKeyManagerOptio
           case LEFT_ARROW:
             if (!!this._parentMenuBar) {
               this.keyboardEventEmitter.next(e);
+            } else {
+              this.focus();
             }
             this.closeMenu();
+
             break;
           case RIGHT_ARROW:
             this.keyboardEventEmitter.next(e);
@@ -188,8 +192,6 @@ export class MenuButtonDirective implements FocusableOption, ListKeyManagerOptio
 
       this._overlayRef = null;
     }
-
-    this.focus();
   }
 
   id(): string | null {
