@@ -1,7 +1,7 @@
 import {Directive, Input, AfterContentInit, ElementRef} from '@angular/core';
 import {FocusMonitor} from '@angular/cdk/a11y';
 import {MenuButtonDirective} from './menu-button.directive';
-import {RootMenu, Menu} from './menu';
+import {RootMenu} from './menu';
 import {MenuKeyManager, MenuBarKeyManager} from './keymanager';
 
 /*
@@ -21,7 +21,7 @@ import {MenuKeyManager, MenuBarKeyManager} from './keymanager';
     '(document:click)': 'doClick($event)',
   },
 })
-export class MenuBarDirective extends RootMenu implements Menu {
+export class MenuBarDirective extends RootMenu {
   // according to the aria spec, menu bars have horizontal default orientation
   @Input('cdkMenuBarOrientation') orientation: 'horizontal' | 'vertical' = 'horizontal';
 

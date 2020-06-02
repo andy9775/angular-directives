@@ -8,10 +8,10 @@ import {
   DOWN_ARROW,
   UP_ARROW,
 } from '@angular/cdk/keycodes';
-import {Menu} from './menu';
 import {MenuButtonDirective} from './menu-button.directive';
 import {FocusKeyManager} from '@angular/cdk/a11y';
 import {Subject} from 'rxjs';
+import {RootMenu} from './menu';
 
 export class MenuKeyManager {
   protected _keyManager: FocusKeyManager<MenuButtonDirective>;
@@ -20,7 +20,7 @@ export class MenuKeyManager {
   tabEventEmitter = new Subject<void>();
   keyboardEventEmitter = new Subject<KeyboardEvent>();
 
-  constructor(private _menu: Menu) {
+  constructor(private _menu: RootMenu) {
     this._keyManager = new FocusKeyManager(_menu.getChildren())
       .withWrap()
       .withVerticalOrientation()
@@ -79,7 +79,7 @@ export class MenuKeyManager {
     });
 
     if (this._keyManager.activeItem.templateRef.child) {
-      this._keyManager.activeItem.templateRef.child.focusFirstItem();
+      this._keyManager.activeItem.templateRef.child.focusFirstChild();
     }
   }
 }
@@ -87,7 +87,7 @@ export class MenuKeyManager {
 export class MenuBarKeyManager {
   protected _keyManager: FocusKeyManager<MenuButtonDirective>;
 
-  constructor(private _menu: Menu) {
+  constructor(private _menu: RootMenu) {
     this._keyManager = new FocusKeyManager(_menu.getChildren())
       .withWrap()
       // TODO ensure correct bidi
@@ -118,14 +118,14 @@ export class MenuBarKeyManager {
         if (this._keyManager.activeItem.isOpen()) {
           if (this._keyManager.activeItem.templateRef.child) {
             keyCode === DOWN_ARROW
-              ? this._keyManager.activeItem.templateRef.child.focusFirstItem()
-              : this._keyManager.activeItem.templateRef.child.focusLastItem();
+              ? this._keyManager.activeItem.templateRef.child.focusFirstChild()
+              : this._keyManager.activeItem.templateRef.child.focusLastChild();
           }
         } else {
           this._keyManager.activeItem.onClick();
           keyCode === DOWN_ARROW
-            ? this._keyManager.activeItem.templateRef.child.focusFirstItem()
-            : this._keyManager.activeItem.templateRef.child.focusLastItem();
+            ? this._keyManager.activeItem.templateRef.child.focusFirstChild()
+            : this._keyManager.activeItem.templateRef.child.focusLastChild();
         }
         break;
       case ENTER:
@@ -133,7 +133,7 @@ export class MenuBarKeyManager {
         event.preventDefault();
         this._keyManager.activeItem.onClick();
         if (this._keyManager.activeItem.templateRef.child) {
-          this._keyManager.activeItem.templateRef.child.focusFirstItem();
+          this._keyManager.activeItem.templateRef.child.focusFirstChild();
         }
         break;
 

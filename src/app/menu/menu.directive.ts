@@ -2,7 +2,7 @@ import {Directive, Input, ElementRef} from '@angular/core';
 import {MenuPanelDirective} from './menu-panel.directive';
 import {MenuButtonDirective} from './menu-button.directive';
 import {FocusMonitor} from '@angular/cdk/a11y';
-import {RootMenu, Menu} from './menu';
+import {RootMenu} from './menu';
 import {MenuKeyManager} from './keymanager';
 
 /*
@@ -20,7 +20,7 @@ import {MenuKeyManager} from './keymanager';
     '[attr.aria-lablledby]': 'lablledBy',
   },
 })
-export class MenuDirective extends RootMenu implements Menu {
+export class MenuDirective extends RootMenu {
   @Input('cdkMenuOrientation') orientation: 'horizontal' | 'vertical' = 'vertical';
   private _keyManager: MenuKeyManager;
 
@@ -58,11 +58,10 @@ export class MenuDirective extends RootMenu implements Menu {
     );
   }
 
-  focusFirstItem() {
+  focusFirstChild() {
     this._keyManager.focusFirstItem();
   }
-
-  focusLastItem() {
+  focusLastChild() {
     this._keyManager.focusLastItem();
   }
 
