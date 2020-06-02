@@ -18,7 +18,7 @@ import {MenuKeyManager, MenuBarKeyManager} from './keymanager';
     '[tabindex]': '0',
     '[attr.aria-orientation]': 'orientation',
     '[attr.aria-expanded]': 'hasOpenChild()',
-    '(document:click)': 'doClick($event)',
+    '(document:click)': '_closeHandler.doClick($event)',
   },
 })
 export class MenuBarDirective extends RootMenu {
@@ -26,6 +26,7 @@ export class MenuBarDirective extends RootMenu {
   @Input('cdkMenuBarOrientation') orientation: 'horizontal' | 'vertical' = 'horizontal';
 
   private _keyManager: MenuBarKeyManager;
+  private _closeHandler = new CloseoutHandler(this);
 
   // TODO key manager
   constructor(protected _element: ElementRef, private fm: FocusMonitor) {
@@ -34,9 +35,21 @@ export class MenuBarDirective extends RootMenu {
     this._keyManager = new MenuBarKeyManager(this);
   }
 
+  registerChild(child: MenuButtonDirective) {
+    super.registerChild(child);
+
+    child.keyboardEventEmitter.subscribe((e) => {
+      this._keyManager.keydown(e);
+    });
+  }
+}
+
+class CloseoutHandler {
+  constructor(private _menu: RootMenu) {}
   doClick(event: MouseEvent) {
     if (
-      !this.getChildren()
+      !this._menu
+        .getChildren()
         .map((child) => {
           if (child.contains(event.target)) {
             return true;
@@ -47,17 +60,10 @@ export class MenuBarDirective extends RootMenu {
       // TODO more performent way to do this? Perhaps have the children register for a close event
       // emitter from each parent? Or have a service which gets injected into the appropriate
       // listeners (children)?
-      this.getChildren()
+      this._menu
+        .getChildren()
         .filter((c) => c.isOpen())
         .forEach((c) => c.closeMenu());
     }
-  }
-
-  registerChild(child: MenuButtonDirective) {
-    super.registerChild(child);
-
-    child.keyboardEventEmitter.subscribe((e) => {
-      this._keyManager.keydown(e);
-    });
   }
 }
