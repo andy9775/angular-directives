@@ -67,13 +67,10 @@ export class MenuDirective extends RootMenu implements AfterContentInit {
           this.keyboardEventEmitter.next(event);
         }
         break;
-      case SPACE:
-        event.preventDefault();
-        this._openSubMenu();
-        break;
       case TAB:
         this.tabEventEmitter.next();
         break;
+      case SPACE:
       case ENTER:
         event.preventDefault();
         if (this._keyManager.activeItem.hasSubmenu()) {
