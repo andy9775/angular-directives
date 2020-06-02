@@ -68,7 +68,7 @@ export class MenuDirective extends RootMenu implements Menu {
 
   registerChild(child: MenuButtonDirective) {
     super.registerChild(child);
-    child.keyboardEventEmitter.subscribe((e) => this._keyManager.keyboardEventEmitter.next(e));
+    child.keyboardEventEmitter.subscribe((e) => this.keyboardEventEmitter.next(e));
     child._id = `cdk-menu-button-${this.getChildren().length}`;
   }
 

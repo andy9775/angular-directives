@@ -20,7 +20,6 @@ import {CheckboxStateService} from './checkbox-state.service';
   selector: '[appMenuButton],[cdkMenuItem], [cdkTriggerFor]',
   exportAs: 'cdkMenuItem',
   host: {
-    // '(focus)': 'focusEventEmitter.next(this)',
     '(blur)': 'isFocused = false',
     '(mouseenter)': 'mouseEnter()',
     '(click)': 'onClick()',
@@ -182,6 +181,11 @@ export class MenuButtonDirective implements FocusableOption, ListKeyManagerOptio
 
   closeMenu() {
     if (this.templateRef && this.templateRef.child) {
+      // close out any potentially open children
+      this.templateRef.child
+        .getChildren()
+        .filter((c) => c.isOpen())
+        .forEach((child) => child.closeMenu());
       this.templateRef.child.closeEventEmitter.unsubscribe();
     }
     // TODO better clean up
