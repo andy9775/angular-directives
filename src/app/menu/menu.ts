@@ -17,10 +17,10 @@ export abstract class RootMenu {
 
   constructor(protected _element: ElementRef) {}
 
-  focusFirstChild?(): void;
-  focusLastChild?(): void;
+  abstract focusFirstChild(): void;
+  abstract focusLastChild(): void;
 
-  contains(el) {
+  contains(el: MenuButtonDirective) {
     return (
       this._element.nativeElement.contains(el) ||
       this.getChildren()

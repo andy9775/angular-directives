@@ -12,7 +12,7 @@ import {MenuKeyManager, MenuBarKeyManager} from './keymanager';
   selector: '[appMenuBar], [cdkMenuBar]',
   exportAs: 'cdkMenuBar',
   host: {
-    '(focus)': '_keyManager.focusFirstItem()',
+    '(focus)': 'focusFirstChild()',
     '(keydown)': '_keyManager.keydown($event)',
     role: 'menubar',
     '[tabindex]': '0',
@@ -34,6 +34,14 @@ export class MenuBarDirective extends RootMenu {
     child.keyboardEventEmitter.subscribe((e) => {
       this._keyManager.keydown(e);
     });
+  }
+
+  focusFirstChild() {
+    this._keyManager.focusFirstItem();
+  }
+
+  focusLastChild() {
+    this._keyManager.focusLastItem();
   }
 }
 
