@@ -9,6 +9,7 @@ import {
   ESCAPE,
   DOWN_ARROW,
   UP_ARROW,
+  ENTER,
 } from '@angular/cdk/keycodes';
 import {first} from 'rxjs/operators';
 import {RootMenu} from './menu';
@@ -115,6 +116,7 @@ export class MenuBarDirective extends RootMenu implements AfterContentInit {
             : this._keyManager.activeItem.templateRef.child.focusLastItem();
         }
         break;
+      case ENTER:
       case SPACE:
         event.preventDefault();
         this._keyManager.activeItem.onClick();
@@ -139,6 +141,7 @@ export class MenuBarDirective extends RootMenu implements AfterContentInit {
           this._keyManager.activeItem.closeMenu();
         }
         break;
+
       default:
         this._keyManager.onKeydown(event);
     }

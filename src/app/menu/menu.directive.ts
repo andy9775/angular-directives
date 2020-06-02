@@ -2,7 +2,7 @@ import {Directive, Input, AfterContentInit, ElementRef, AfterViewInit} from '@an
 import {MenuPanelDirective} from './menu-panel.directive';
 import {MenuButtonDirective} from './menu-button.directive';
 import {FocusKeyManager, FocusMonitor} from '@angular/cdk/a11y';
-import {SPACE, ESCAPE, TAB, LEFT_ARROW, RIGHT_ARROW} from '@angular/cdk/keycodes';
+import {SPACE, ESCAPE, TAB, LEFT_ARROW, RIGHT_ARROW, ENTER} from '@angular/cdk/keycodes';
 import {Subject} from 'rxjs';
 import {RootMenu} from './menu';
 
@@ -74,6 +74,14 @@ export class MenuDirective extends RootMenu implements AfterContentInit {
       case TAB:
         this.tabEventEmitter.next();
         break;
+      case ENTER:
+        event.preventDefault();
+        if (this._keyManager.activeItem.hasSubmenu()) {
+          this._openSubMenu();
+        } else {
+          this._keyManager.activeItem.onClick();
+          this.tabEventEmitter.next();
+        }
       default:
         this._keyManager.onKeydown(event);
     }
