@@ -53,8 +53,17 @@ export class MenuDirective extends RootMenu implements AfterContentInit {
   keydown(event: KeyboardEvent) {
     const {keyCode} = event; // TODO don't use keyCode
     switch (keyCode) {
-      case ESCAPE:
-        this.closeEventEmitter.next();
+      case SPACE:
+      case ENTER:
+        event.preventDefault();
+        if (this._keyManager.activeItem.hasSubmenu()) {
+          this._openSubMenu();
+        } else {
+          this._keyManager.activeItem.onClick();
+          if (this._keyManager.activeItem.role === 'menuitem') {
+            this.tabEventEmitter.next();
+          }
+        }
         break;
       case LEFT_ARROW:
         // TODO if top level menu, toggle to next
@@ -67,20 +76,11 @@ export class MenuDirective extends RootMenu implements AfterContentInit {
           this.keyboardEventEmitter.next(event);
         }
         break;
+      case ESCAPE:
+        this.closeEventEmitter.next();
+        break;
       case TAB:
         this.tabEventEmitter.next();
-        break;
-      case SPACE:
-      case ENTER:
-        event.preventDefault();
-        if (this._keyManager.activeItem.hasSubmenu()) {
-          this._openSubMenu();
-        } else {
-          this._keyManager.activeItem.onClick();
-          if (this._keyManager.activeItem.role === 'menuitem') {
-            this.tabEventEmitter.next();
-          }
-        }
         break;
       default:
         this._keyManager.onKeydown(event);
