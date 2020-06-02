@@ -5,7 +5,7 @@ import {MenuPanelDirective} from './menu-panel.directive';
 import {MenuDirective} from './menu.directive';
 import {Subject} from 'rxjs';
 import {MenuBarDirective} from './menu-bar.directive';
-import {FocusableOption, FocusMonitor} from '@angular/cdk/a11y';
+import {FocusableOption, FocusMonitor, ListKeyManagerOption} from '@angular/cdk/a11y';
 import {RIGHT_ARROW, LEFT_ARROW} from '@angular/cdk/keycodes';
 import {MenuGroupDirective} from './menu-group.directive';
 import {CheckboxStateService} from './checkbox-state.service';
@@ -36,7 +36,7 @@ import {CheckboxStateService} from './checkbox-state.service';
     '[attr.aria-controls]': '!!templateRef && !!templateRef.child ? templateRef.child.id() : null',
   },
 })
-export class MenuButtonDirective implements FocusableOption {
+export class MenuButtonDirective implements FocusableOption, ListKeyManagerOption {
   // TODO upon clicking a button, the menu should track the last clicked
   // which can track radio/checkbox logic - it should also set aria-checked
   // which can be set in the parent menu
@@ -92,6 +92,11 @@ export class MenuButtonDirective implements FocusableOption {
     this.isFocused = true;
     // this.focusEventEmitter.next(this);
     // console.log('focused: ', this.id());
+  }
+
+  getLabel() {
+    // TODO better way to get the label
+    return this._element.nativeElement.innerText;
   }
 
   private _checked() {

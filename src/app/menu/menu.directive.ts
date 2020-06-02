@@ -104,7 +104,10 @@ export class MenuDirective extends RootMenu implements AfterContentInit {
   }
 
   ngAfterContentInit() {
-    this._keyManager = new FocusKeyManager(this.children).withWrap().withVerticalOrientation();
+    this._keyManager = new FocusKeyManager(this.children)
+      .withWrap()
+      .withVerticalOrientation()
+      .withTypeAhead(100);
     this._keyManager.change.subscribe((i) => console.log(i));
   }
 

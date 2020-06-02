@@ -57,7 +57,8 @@ export class MenuBarDirective extends RootMenu implements AfterContentInit {
     this._keyManager = new FocusKeyManager(this.children)
       .withWrap()
       // TODO use bidi to determine this
-      .withHorizontalOrientation('ltr');
+      .withHorizontalOrientation('ltr')
+      .withTypeAhead(100);
   }
 
   doClick(event: MouseEvent) {
@@ -143,3 +144,8 @@ export class MenuBarDirective extends RootMenu implements AfterContentInit {
     }
   }
 }
+
+/*
+  TODO keys
+  character ()
+ */
