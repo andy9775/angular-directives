@@ -1,10 +1,32 @@
 import {MenuButtonDirective} from './menu-button.directive';
+import {ElementRef, Input} from '@angular/core';
 
 export abstract class RootMenu {
   private _children: Array<MenuButtonDirective> = new Array<MenuButtonDirective>();
+  protected _element: ElementRef;
+
+  @Input('id')
+  set id(val: string) {
+    if (!this._id) {
+      this._id = val;
+    }
+  }
+  get id() {
+    return this._id || this._element.nativeElement.getAttribute('id');
+  }
+  private _id: string;
 
   focusFirstChild?(): void;
   focusLastChild?(): void;
+
+  contains(el) {
+    return (
+      this._element.nativeElement.contains(el) ||
+      this.getChildren()
+        .map((c) => c.contains(el))
+        .includes(true)
+    );
+  }
 
   getChildren() {
     return this._children;

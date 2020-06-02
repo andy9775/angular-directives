@@ -37,25 +37,15 @@ export class MenuDirective extends RootMenu {
 
   lablledBy: string | null = null;
 
-  // TODO key manager
   constructor(
     private _parent: MenuPanelDirective,
-    private _element: ElementRef,
+    protected _element: ElementRef,
     private fm: FocusMonitor
   ) {
     super();
-    fm.monitor(_element);
+    fm.monitor(this._element);
     _parent.registerChildMenu(this);
     this._keyManager = new MenuKeyManager(this);
-  }
-
-  contains(el) {
-    return (
-      this._element.nativeElement.contains(el) ||
-      this.getChildren()
-        .map((c) => c.contains(el))
-        .includes(true)
-    );
   }
 
   focusFirstChild() {
@@ -68,11 +58,6 @@ export class MenuDirective extends RootMenu {
   registerChild(child: MenuButtonDirective) {
     super.registerChild(child);
     child.keyboardEventEmitter.subscribe((e) => this.keyboardEventEmitter.next(e));
-    child._id = `cdk-menu-button-${this.getChildren().length}`;
-  }
-
-  id(): string | null {
-    // TODO generate a sequential internal id and use either that or the provided id?
-    return this._element.nativeElement.getAttribute('id');
+    child.id = `cdk-menu-button-${this.getChildren().length}`;
   }
 }

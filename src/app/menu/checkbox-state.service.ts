@@ -7,9 +7,9 @@ import {MenuButtonDirective} from './menu-button.directive';
 export class CheckboxStateService {
   private _state = new Map<string, boolean>();
   isChecked(child: MenuButtonDirective) {
-    return this._state.get(child._id) || false;
+    return this._state.get(child.id) || false;
   }
   toggle(child: MenuButtonDirective) {
-    this._state.set(child._id, !(this._state.get(child._id) || false));
+    this._state.set(child.id, !(this._state.get(child.id) || false));
   }
 }

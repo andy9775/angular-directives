@@ -32,7 +32,7 @@ import {CheckboxStateService} from './checkbox-state.service';
     '[attr.aria-expanded]': '!!templateRef ? !!_overlayRef : null',
     '[attr.aria-checked]': '_checked()',
     '[attr.aria-disabled]': 'disabled.toString()',
-    '[attr.aria-controls]': '!!templateRef && !!templateRef.child ? templateRef.child.id() : null',
+    '[attr.aria-controls]': '!!templateRef && !!templateRef.child ? templateRef.child.id : null',
   },
 })
 export class MenuButtonDirective implements FocusableOption, ListKeyManagerOption {
@@ -52,7 +52,16 @@ export class MenuButtonDirective implements FocusableOption, ListKeyManagerOptio
 
   isFocused = false;
 
-  _id: string;
+  @Input('id')
+  set id(val: string) {
+    if (!this._id) {
+      this._id = val;
+    }
+  }
+  get id() {
+    return this._id || this._element.nativeElement.getAttribute('id');
+  }
+  private _id: string;
 
   get disabled() {
     return this._element.nativeElement.getAttribute('disabled') || false;
@@ -155,7 +164,7 @@ export class MenuButtonDirective implements FocusableOption, ListKeyManagerOptio
         });
       }
 
-      this.templateRef.child.lablledBy = this.id();
+      this.templateRef.child.lablledBy = this.id;
 
       this.templateRef.child.keyboardEventEmitter.subscribe((e: KeyboardEvent) => {
         const {keyCode} = e;
@@ -195,10 +204,6 @@ export class MenuButtonDirective implements FocusableOption, ListKeyManagerOptio
 
       this._overlayRef = null;
     }
-  }
-
-  id(): string | null {
-    return this._element.nativeElement.getAttribute('id');
   }
 
   private _getOverlayPositionStrategy() {

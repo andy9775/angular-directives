@@ -15,10 +15,10 @@ export class MenuGroupDirective {
   constructor(private _selectionService: RadioGroupSelectionService) {}
 
   setActiveChild(c: MenuButtonDirective) {
-    this._selectionService.setActiveChild(this._id, c._id);
+    this._selectionService.setActiveChild(this._id, c.id);
   }
 
   isActiveChild(c: MenuButtonDirective) {
-    return this._selectionService.isActiveChild(this._id, c._id);
+    return this._selectionService.isActiveChild(this._id, c.id);
   }
 }

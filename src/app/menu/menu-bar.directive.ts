@@ -28,9 +28,9 @@ export class MenuBarDirective extends RootMenu {
   private _keyManager: MenuBarKeyManager;
 
   // TODO key manager
-  constructor(private _element: ElementRef, private fm: FocusMonitor) {
+  constructor(protected _element: ElementRef, private fm: FocusMonitor) {
     super();
-    fm.monitor(_element);
+    fm.monitor(this._element);
     this._keyManager = new MenuBarKeyManager(this);
   }
 
