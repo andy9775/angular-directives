@@ -5,7 +5,7 @@ import {MenuPanelDirective} from './menu-panel.directive';
 import {MenuDirective} from './menu.directive';
 import {Subject} from 'rxjs';
 import {MenuBarDirective} from './menu-bar.directive';
-import {FocusableOption, FocusMonitor, ListKeyManagerOption} from '@angular/cdk/a11y';
+import {FocusableOption, ListKeyManagerOption} from '@angular/cdk/a11y';
 import {RIGHT_ARROW, LEFT_ARROW} from '@angular/cdk/keycodes';
 import {MenuGroupDirective} from './menu-group.directive';
 import {CheckboxStateService} from './checkbox-state.service';
@@ -71,7 +71,6 @@ export class MenuButtonDirective implements FocusableOption, ListKeyManagerOptio
     private _overlay: Overlay,
     private _element: ElementRef,
     private _viewContainer: ViewContainerRef,
-    private fm: FocusMonitor,
     // need someway to set the initial state of the checkbox
     // also need to emit events to update external components of changed state
     private state: CheckboxStateService,
@@ -88,7 +87,6 @@ export class MenuButtonDirective implements FocusableOption, ListKeyManagerOptio
     if (_parentMenuBar) {
       _parentMenuBar.registerChild(this);
     }
-    fm.monitor(_element);
   }
 
   focus() {

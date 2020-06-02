@@ -3,7 +3,6 @@ import {ElementRef, Input} from '@angular/core';
 
 export abstract class RootMenu {
   private _children: Array<MenuButtonDirective> = new Array<MenuButtonDirective>();
-  protected _element: ElementRef;
 
   @Input('id')
   set id(val: string) {
@@ -15,6 +14,8 @@ export abstract class RootMenu {
     return this._id || this._element.nativeElement.getAttribute('id');
   }
   private _id: string;
+
+  constructor(protected _element: ElementRef) {}
 
   focusFirstChild?(): void;
   focusLastChild?(): void;

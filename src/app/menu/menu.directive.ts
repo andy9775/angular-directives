@@ -1,7 +1,6 @@
 import {Directive, Input, ElementRef} from '@angular/core';
 import {MenuPanelDirective} from './menu-panel.directive';
 import {MenuButtonDirective} from './menu-button.directive';
-import {FocusMonitor} from '@angular/cdk/a11y';
 import {RootMenu} from './menu';
 import {MenuKeyManager} from './keymanager';
 
@@ -22,7 +21,7 @@ import {MenuKeyManager} from './keymanager';
 })
 export class MenuDirective extends RootMenu {
   @Input('cdkMenuOrientation') orientation: 'horizontal' | 'vertical' = 'vertical';
-  private _keyManager: MenuKeyManager;
+  private _keyManager = new MenuKeyManager(this);
 
   // TODO clean these up
   get closeEventEmitter() {
@@ -37,15 +36,9 @@ export class MenuDirective extends RootMenu {
 
   lablledBy: string | null = null;
 
-  constructor(
-    private _parent: MenuPanelDirective,
-    protected _element: ElementRef,
-    private fm: FocusMonitor
-  ) {
-    super();
-    fm.monitor(this._element);
+  constructor(private _parent: MenuPanelDirective, protected _element: ElementRef) {
+    super(_element);
     _parent.registerChildMenu(this);
-    this._keyManager = new MenuKeyManager(this);
   }
 
   focusFirstChild() {
