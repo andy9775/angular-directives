@@ -116,6 +116,7 @@ export class MenuButtonDirective implements FocusableOption, ListKeyManagerOptio
     }
     this.state.toggle(this);
     // check - do nothing if there is a child menu?
+    // TODO should this emit an event?
     this.isOpen() ? this.closeMenu() : this._openMenu();
   }
 

@@ -1,8 +1,10 @@
 import {MenuButtonDirective} from './menu-button.directive';
 import {ElementRef, Input} from '@angular/core';
+import {Subject} from 'rxjs';
 
 export abstract class RootMenu {
   private _children: Array<MenuButtonDirective> = new Array<MenuButtonDirective>();
+  abstract get closeEventEmitter(): Subject<void>;
 
   @Input('id')
   set id(val: string) {

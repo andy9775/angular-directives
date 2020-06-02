@@ -3,6 +3,7 @@ import {FocusMonitor} from '@angular/cdk/a11y';
 import {MenuButtonDirective} from './menu-button.directive';
 import {RootMenu} from './menu';
 import {MenuKeyManager, MenuBarKeyManager} from './keymanager';
+import {Subject} from 'rxjs';
 
 /*
   TODO
@@ -24,6 +25,8 @@ import {MenuKeyManager, MenuBarKeyManager} from './keymanager';
 export class MenuBarDirective extends RootMenu {
   // according to the aria spec, menu bars have horizontal default orientation
   @Input('cdkMenuBarOrientation') orientation: 'horizontal' | 'vertical' = 'horizontal';
+  // todo should this emit all close events or just closing out of the menu bar?
+  closeEventEmitter = new Subject<void>();
 
   private _keyManager = new MenuBarKeyManager(this);
   private _closeHandler = new CloseoutHandler(this);
@@ -34,6 +37,7 @@ export class MenuBarDirective extends RootMenu {
     child.keyboardEventEmitter.subscribe((e) => {
       this._keyManager.keydown(e);
     });
+    child.templateRef.child.closeEventEmitter.subscribe(() => this.closeEventEmitter.next());
   }
 
   focusFirstChild() {
