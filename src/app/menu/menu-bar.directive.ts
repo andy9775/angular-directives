@@ -35,9 +35,14 @@ export class MenuBarDirective extends RootMenu {
     super.registerChild(child);
 
     child.keyboardEventEmitter.subscribe((e) => {
+      // do we need to register this here?
+      // can we move this logic into the _keyManager?
+      // TODO determine when this fires? Only in open children?
       this._keyManager.keydown(e);
     });
-    child.templateRef.child.closeEventEmitter.subscribe(() => this.closeEventEmitter.next());
+    if (child.templateRef) {
+      child.templateRef.child.closeEventEmitter.subscribe(() => this.closeEventEmitter.next());
+    }
   }
 
   focusFirstChild() {
