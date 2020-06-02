@@ -77,8 +77,11 @@ export class MenuDirective extends RootMenu implements AfterContentInit {
           this._openSubMenu();
         } else {
           this._keyManager.activeItem.onClick();
-          this.tabEventEmitter.next();
+          if (this._keyManager.activeItem.role === 'menuitem') {
+            this.tabEventEmitter.next();
+          }
         }
+        break;
       default:
         this._keyManager.onKeydown(event);
     }
