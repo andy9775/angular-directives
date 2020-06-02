@@ -47,9 +47,7 @@ export class MenuButtonDirective implements FocusableOption, ListKeyManagerOptio
   @Input('cdkTriggerFor') templateRef: MenuPanelDirective;
   private _overlayRef: OverlayRef;
   mouseEnterEmitter = new Subject();
-  closeEventEmitter = new Subject();
   tabEventEmitter = new Subject();
-  focusEventEmitter = new Subject<MenuButtonDirective>();
 
   keyboardEventEmitter = new Subject<KeyboardEvent>();
 
@@ -87,11 +85,8 @@ export class MenuButtonDirective implements FocusableOption, ListKeyManagerOptio
 
   focus() {
     // debug to determine which element has focus
-    // console.log('focus: ', this._element.nativeElement.innerText);
     this._element.nativeElement.focus();
     this.isFocused = true;
-    // this.focusEventEmitter.next(this);
-    // console.log('focused: ', this.id());
   }
 
   getLabel() {
@@ -161,11 +156,6 @@ export class MenuButtonDirective implements FocusableOption, ListKeyManagerOptio
         });
       }
 
-      // get focus event from the sub-menu
-      this.templateRef.child.focusEventEmitter.subscribe((c) => {
-        this.focusEventEmitter.next(c);
-      });
-
       this.templateRef.child.lablledBy = this.id();
 
       this.templateRef.child.keyboardEventEmitter.subscribe((e: KeyboardEvent) => {
@@ -188,7 +178,6 @@ export class MenuButtonDirective implements FocusableOption, ListKeyManagerOptio
 
   closeMenu() {
     if (this.templateRef && this.templateRef.child) {
-      this.templateRef.child.children.forEach((child) => child.closeMenu());
       this.templateRef.child.closeEventEmitter.unsubscribe();
     }
     // TODO better clean up
@@ -199,7 +188,6 @@ export class MenuButtonDirective implements FocusableOption, ListKeyManagerOptio
 
       this._overlayRef = null;
     }
-    this.closeEventEmitter.next();
 
     this.focus();
   }

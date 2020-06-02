@@ -1,11 +1,14 @@
 import {MenuButtonDirective} from './menu-button.directive';
 import {FocusKeyManager} from '@angular/cdk/a11y';
 
-export class RootMenu {
-  private _children: Array<MenuButtonDirective> = new Array<MenuButtonDirective>();
-  protected _keyManager: FocusKeyManager<MenuButtonDirective>;
+export interface Menu {
+  getChildren(): Array<MenuButtonDirective>;
+}
 
-  get children() {
+export abstract class RootMenu {
+  private _children: Array<MenuButtonDirective> = new Array<MenuButtonDirective>();
+
+  getChildren() {
     return this._children;
   }
 
