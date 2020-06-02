@@ -86,7 +86,6 @@ export class MenuButtonDirective implements FocusableOption, ListKeyManagerOptio
     // debug to determine which element has focus
     this._element.nativeElement.focus();
     this.isFocused = true;
-    console.log('focus: ', this.id());
   }
 
   getLabel() {
