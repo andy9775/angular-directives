@@ -147,8 +147,3 @@ export class MenuBarDirective extends RootMenu implements AfterContentInit {
     }
   }
 }
-
-/*
-  TODO keys
-  character ()
- */
