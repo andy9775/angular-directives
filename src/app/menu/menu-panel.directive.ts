@@ -7,7 +7,7 @@ import {MenuDirective} from './menu.directive';
 })
 export class MenuPanelDirective {
   child: MenuDirective;
-  constructor(public template: TemplateRef<any>) {}
+  constructor(public template: TemplateRef<HTMLElement>) {}
 
   registerChildMenu(child: MenuDirective) {
     this.child = child;

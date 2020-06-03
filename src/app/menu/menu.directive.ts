@@ -21,7 +21,7 @@ import {MenuKeyManager} from './keymanager';
 })
 export class MenuDirective extends RootMenu {
   @Input('cdkMenuOrientation') orientation: 'horizontal' | 'vertical' = 'vertical';
-  private _keyManager = new MenuKeyManager(this);
+  private _keyManager = new MenuKeyManager(this.getChildren());
 
   // TODO clean these up
   get closeEventEmitter() {
@@ -37,7 +37,7 @@ export class MenuDirective extends RootMenu {
   lablledBy: string | null = null;
 
   constructor(private _parent: MenuPanelDirective, protected _element: ElementRef) {
-    super(_element);
+    super();
     _parent.registerChildMenu(this);
   }
 

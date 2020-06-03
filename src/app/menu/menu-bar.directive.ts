@@ -28,8 +28,12 @@ export class MenuBarDirective extends RootMenu {
   // todo should this emit all close events or just closing out of the menu bar?
   closeEventEmitter = new Subject<void>();
 
-  private _keyManager = new MenuBarKeyManager(this);
+  private _keyManager = new MenuBarKeyManager(this.getChildren());
   private _closeHandler = new CloseoutHandler(this);
+
+  constructor(protected _element: ElementRef) {
+    super();
+  }
 
   registerChild(child: MenuButtonDirective) {
     super.registerChild(child);
@@ -63,7 +67,7 @@ class CloseoutHandler {
       // listeners (children)?
       this._menu
         .getChildren()
-        .filter((c) => c.isOpen())
+        .filter((c) => c.isMenuOpen())
         .forEach((c) => c.closeMenu());
     }
   }

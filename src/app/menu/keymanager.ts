@@ -20,8 +20,8 @@ export class MenuKeyManager {
   tabEventEmitter = new Subject<void>();
   keyboardEventEmitter = new Subject<KeyboardEvent>();
 
-  constructor(private _menu: RootMenu) {
-    this._keyManager = new FocusKeyManager(_menu.getChildren())
+  constructor(children: Array<MenuButtonDirective>) {
+    this._keyManager = new FocusKeyManager(children)
       .withWrap()
       .withVerticalOrientation()
       .withTypeAhead(100);
@@ -84,28 +84,10 @@ export class MenuKeyManager {
   }
 }
 
-export class MenuBarKeyManager {
-  protected _keyManager: FocusKeyManager<MenuButtonDirective>;
-
-  constructor(private _menu: RootMenu) {
-    this._keyManager = new FocusKeyManager(_menu.getChildren())
-      .withWrap()
-      // TODO ensure correct bidi
-      .withHorizontalOrientation('ltr')
-      .withTypeAhead(100);
-  }
-
-  focusFirstItem() {
-    this._keyManager.setFirstItemActive();
-  }
-  focusLastItem() {
-    this._keyManager.setLastItemActive();
-  }
-
-  focusActiveItem() {
-    if (this._keyManager.activeItem) {
-      this._keyManager.activeItem.focus();
-    }
+export class MenuBarKeyManager extends MenuKeyManager {
+  constructor(children: Array<MenuButtonDirective>) {
+    super(children);
+    this._keyManager = this._keyManager.withHorizontalOrientation('ltr');
   }
 
   keydown(event: KeyboardEvent) {
@@ -115,7 +97,7 @@ export class MenuBarKeyManager {
       case DOWN_ARROW:
       case UP_ARROW:
         event.preventDefault();
-        if (this._keyManager.activeItem.isOpen()) {
+        if (this._keyManager.activeItem.isMenuOpen()) {
           if (this._keyManager.activeItem.templateRef.child) {
             keyCode === DOWN_ARROW
               ? this._keyManager.activeItem.templateRef.child.focusFirstChild()
@@ -141,14 +123,14 @@ export class MenuBarKeyManager {
       case RIGHT_ARROW:
         const prev = this._keyManager.activeItem;
         this._keyManager.onKeydown(event);
-        if (prev.isOpen()) {
+        if (prev.isMenuOpen()) {
           prev.closeMenu();
           this._keyManager.activeItem.onClick();
         }
 
         break;
       case ESCAPE:
-        if (this._keyManager.activeItem.isOpen()) {
+        if (this._keyManager.activeItem.isMenuOpen()) {
           this._keyManager.activeItem.closeMenu();
         }
         break;

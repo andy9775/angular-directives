@@ -1,10 +1,14 @@
 import {MenuButtonDirective} from './menu-button.directive';
-import {ElementRef, Input} from '@angular/core';
+import {ElementRef, Input, Directive} from '@angular/core';
 import {Subject} from 'rxjs';
 
+@Directive()
+/** @docs-private */
 export abstract class RootMenu {
   private _children: Array<MenuButtonDirective> = new Array<MenuButtonDirective>();
   abstract get closeEventEmitter(): Subject<void>;
+
+  protected abstract _element: ElementRef;
 
   @Input('id')
   set id(val: string) {
@@ -16,8 +20,6 @@ export abstract class RootMenu {
     return this._id || this._element.nativeElement.getAttribute('id');
   }
   private _id: string;
-
-  constructor(protected _element: ElementRef) {}
 
   abstract focusFirstChild(): void;
   abstract focusLastChild(): void;
@@ -36,7 +38,7 @@ export abstract class RootMenu {
   }
 
   hasOpenChild() {
-    return this._children.map((c) => c.isOpen()).includes(true);
+    return this._children.map((c) => c.isMenuOpen()).includes(true);
   }
 
   protected registerChild(child: MenuButtonDirective) {
