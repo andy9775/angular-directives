@@ -29,7 +29,7 @@ export class MenuBarDirective extends RootMenu {
   closeEventEmitter = new Subject<void>();
 
   private _keyManager = new MenuBarKeyManager(this.getChildren());
-  private _closeHandler = new CloseoutHandler(this);
+  private _closeHandler = new CloseoutHandler(this.getChildren());
 
   constructor(protected _element: ElementRef) {
     super();
@@ -59,22 +59,18 @@ export class MenuBarDirective extends RootMenu {
 }
 
 class CloseoutHandler {
-  constructor(private _menu: RootMenu) {}
+  constructor(private children: Array<MenuButtonDirective>) {}
   doClick(event: MouseEvent) {
     if (!this._clickedInChild(event)) {
       // TODO more performent way to do this? Perhaps have the children register for a close event
       // emitter from each parent? Or have a service which gets injected into the appropriate
       // listeners (children)?
-      this._menu
-        .getChildren()
-        .filter((c) => c.isMenuOpen())
-        .forEach((c) => c.closeMenu());
+      this.children.filter((c) => c.isMenuOpen()).forEach((c) => c.closeMenu());
     }
   }
 
   private _clickedInChild(event: MouseEvent) {
-    return this._menu
-      .getChildren()
+    return this.children
       .map((child) => {
         if (child.contains(event.target)) {
           return true;
