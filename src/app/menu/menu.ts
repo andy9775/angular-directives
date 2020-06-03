@@ -1,7 +1,8 @@
 import {MenuButtonDirective} from './menu-button.directive';
-import {ElementRef, Input, Directive} from '@angular/core';
+import {ElementRef, Input, Directive, Injectable} from '@angular/core';
 import {Subject} from 'rxjs';
 
+@Injectable()
 @Directive()
 /** @docs-private */
 export abstract class RootMenu {
@@ -41,7 +42,7 @@ export abstract class RootMenu {
     return this._children.map((c) => c.isMenuOpen()).includes(true);
   }
 
-  protected registerChild(child: MenuButtonDirective) {
+  registerChild(child: MenuButtonDirective) {
     child.mouseEnterEmitter.subscribe((element: MenuButtonDirective) => {
       this._children.forEach((child) => {
         if (child !== element) {

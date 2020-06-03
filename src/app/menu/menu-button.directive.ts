@@ -9,6 +9,7 @@ import {FocusableOption, ListKeyManagerOption} from '@angular/cdk/a11y';
 import {RIGHT_ARROW, LEFT_ARROW, ESCAPE} from '@angular/cdk/keycodes';
 import {MenuGroupDirective} from './menu-group.directive';
 import {CheckboxStateService} from './checkbox-state.service';
+import {RootMenu} from './menu';
 
 @Directive()
 /** @docs-private */
