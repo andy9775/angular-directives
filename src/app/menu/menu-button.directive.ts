@@ -10,126 +10,29 @@ import {RIGHT_ARROW, LEFT_ARROW} from '@angular/cdk/keycodes';
 import {MenuGroupDirective} from './menu-group.directive';
 import {CheckboxStateService} from './checkbox-state.service';
 
-/*
-        TODO
-          aria-label - up to the user?
+@Directive()
+/** @docs-private */
+abstract class MenuButton {
+  abstract get id(): string;
+  abstract set id(val: string);
+  protected _id: string;
 
-          id??
-      */
-@Directive({
-  selector: '[appMenuButton],[cdkMenuItem], [cdkTriggerFor]',
-  exportAs: 'cdkMenuItem',
-  host: {
-    '(blur)': 'isFocused = false',
-    '(mouseenter)': 'mouseEnter()',
-    '(click)': 'onClick()',
-    // a11y
-    '[attr.role]': 'role',
-    type: 'button', // necessary ??
-    // only has 0 tab index if focused and is a button inside the menuBar
-    '[tabindex]': '(isFocused && !!_parentMenu) ? "0" : "-1"', // check if disabled
-    '[attr.aria-haspopup]': '!!templateRef ? "menu" : "false"', // only if it has a ref??
-    '[attr.aria-expanded]': '!!templateRef ? !!_overlayRef : null',
-    '[attr.aria-checked]': '_checked()',
-    '[attr.aria-disabled]': 'disabled.toString()',
-    '[attr.aria-controls]': '!!templateRef && !!templateRef.child ? templateRef.child.id : null',
-  },
-})
-export class MenuButtonDirective implements FocusableOption, ListKeyManagerOption {
-  // TODO upon clicking a button, the menu should track the last clicked
-  // which can track radio/checkbox logic - it should also set aria-checked
-  // which can be set in the parent menu
-  // implementation can be to get the currently checked button from the parent
-  // and see if that is this button (or parentMenu.isChecked(menButton) )
-  @Input() role: 'menuitem' | 'menuitemradio' | 'menuitemcheckbox' = 'menuitem';
+  abstract templateRef: MenuPanelDirective;
+  protected abstract _overlay: Overlay;
+  protected abstract _element: ElementRef<HTMLElement>;
+  protected abstract _viewContainer: ViewContainerRef;
+  protected abstract _parentMenu?: MenuDirective;
+  protected abstract _parentMenuBar?: MenuBarDirective;
 
-  @Input('cdkTriggerFor') templateRef: MenuPanelDirective;
-  private _overlayRef: OverlayRef;
-  mouseEnterEmitter = new Subject();
+  protected _overlayRef: OverlayRef;
+
   tabEventEmitter = new Subject();
 
   keyboardEventEmitter = new Subject<KeyboardEvent>();
 
-  isFocused = false;
+  abstract focus(): void;
 
-  @Input('id')
-  set id(val: string) {
-    if (!this._id) {
-      this._id = val;
-    }
-  }
-  get id() {
-    return this._id || this._element.nativeElement.getAttribute('id');
-  }
-  private _id: string;
-
-  get disabled() {
-    return this._element.nativeElement.getAttribute('disabled') || false;
-  }
-
-  constructor(
-    private _overlay: Overlay,
-    private _element: ElementRef,
-    private _viewContainer: ViewContainerRef,
-    // need someway to set the initial state of the checkbox
-    // also need to emit events to update external components of changed state
-    private state: CheckboxStateService,
-    // TODO use interface and not specific type. Interface should have register and isChecked
-    // methods and listen to clicked events (or extend from base class)
-    // if not null this button is within a sub-menu (hacky)
-    @Optional() private _parentMenu?: MenuDirective,
-    @Optional() private _parentMenuBar?: MenuBarDirective,
-    @Optional() private _group?: MenuGroupDirective
-  ) {
-    if (_parentMenu) {
-      _parentMenu.registerChild(this);
-    }
-    if (_parentMenuBar) {
-      _parentMenuBar.registerChild(this);
-    }
-  }
-
-  focus() {
-    // debug to determine which element has focus
-    this._element.nativeElement.focus();
-    this.isFocused = true;
-  }
-
-  getLabel() {
-    // TODO better way to get the label
-    return this._element.nativeElement.innerText;
-  }
-
-  private _checked() {
-    if (!!this._group && this.role === 'menuitemradio') {
-      return this._group.isActiveChild(this).toString();
-    } else if (this.role === 'menuitemcheckbox') {
-      return this.state.isChecked(this).toString();
-    }
-
-    return null;
-  }
-
-  onClick() {
-    if (!!this._group) {
-      this._group.setActiveChild(this);
-    }
-    this.state.toggle(this);
-    // check - do nothing if there is a child menu?
-    // TODO should this emit an event?
-    this.isOpen() ? this.closeMenu() : this._openMenu();
-  }
-
-  mouseEnter() {
-    this.focus();
-    if ((!!this._parentMenuBar && this._parentMenuBar.hasOpenChild()) || !this._parentMenuBar) {
-      // only open on mouse enter if nothing else is open
-      !this._overlayRef && this._openMenu();
-      this.mouseEnterEmitter.next(this);
-    }
-  }
-
-  isOpen() {
+  isMenuOpen() {
     return !!this._overlayRef;
   }
 
@@ -137,14 +40,26 @@ export class MenuButtonDirective implements FocusableOption, ListKeyManagerOptio
     return !!this.templateRef;
   }
 
-  contains(el) {
-    return (
-      this._element.nativeElement.contains(el) ||
-      (this.templateRef && this.templateRef.child ? this.templateRef.child.contains(el) : false)
-    );
+  closeMenu() {
+    if (this.templateRef && this.templateRef.child) {
+      // close out any potentially open children
+      this.templateRef.child
+        .getChildren()
+        .filter((c) => c.isMenuOpen())
+        .forEach((child) => child.closeMenu());
+      this.templateRef.child.closeEventEmitter.unsubscribe();
+    }
+    // TODO better clean up
+    if (this._overlayRef) {
+      this._overlayRef.detach();
+
+      this._overlayRef.dispose();
+
+      this._overlayRef = null;
+    }
   }
 
-  private _openMenu() {
+  protected _openMenu() {
     if (!!this.templateRef) {
       this._overlayRef = this._overlay.create({
         positionStrategy: this._getOverlayPositionStrategy(),
@@ -186,25 +101,6 @@ export class MenuButtonDirective implements FocusableOption, ListKeyManagerOptio
     }
   }
 
-  closeMenu() {
-    if (this.templateRef && this.templateRef.child) {
-      // close out any potentially open children
-      this.templateRef.child
-        .getChildren()
-        .filter((c) => c.isOpen())
-        .forEach((child) => child.closeMenu());
-      this.templateRef.child.closeEventEmitter.unsubscribe();
-    }
-    // TODO better clean up
-    if (this._overlayRef) {
-      this._overlayRef.detach();
-
-      this._overlayRef.dispose();
-
-      this._overlayRef = null;
-    }
-  }
-
   private _getOverlayPositionStrategy() {
     return this._overlay
       .position()
@@ -233,7 +129,123 @@ export class MenuButtonDirective implements FocusableOption, ListKeyManagerOptio
   }
 }
 
-// for the cdk overlay example, what should the style be?
+/*
+        TODO
+          aria-label - up to the user?
 
-// One example using the default directives
-// Another example using a custom directive (say a timeout warning)
+          id??
+      */
+@Directive({
+  selector: '[appMenuButton],[cdkMenuItem], [cdkTriggerFor]',
+  exportAs: 'cdkMenuItem',
+  host: {
+    '(blur)': '_isFocused = false',
+    '(mouseenter)': 'mouseEnter()',
+    '(click)': 'onClick()',
+    // a11y
+    '[attr.role]': 'role',
+    type: 'button', // necessary ??
+    // only has 0 tab index if focused and is a button inside the menuBar
+    '[tabindex]': '(_isFocused && !!_parentMenu) ? "0" : "-1"', // check if disabled
+    '[attr.aria-haspopup]': '!!templateRef ? "menu" : "false"', // only if it has a ref??
+    '[attr.aria-expanded]': '!!templateRef ? !!_overlayRef : null',
+    '[attr.aria-checked]': '_checked()',
+    '[attr.aria-disabled]': 'disabled.toString()',
+    '[attr.aria-controls]': '!!templateRef && !!templateRef.child ? templateRef.child.id : null',
+  },
+})
+export class MenuButtonDirective extends MenuButton
+  implements FocusableOption, ListKeyManagerOption {
+  // TODO upon clicking a button, the menu should track the last clicked
+  // which can track radio/checkbox logic - it should also set aria-checked
+  // which can be set in the parent menu
+  // implementation can be to get the currently checked button from the parent
+  // and see if that is this button (or parentMenu.isChecked(menButton) )
+  @Input() role: 'menuitem' | 'menuitemradio' | 'menuitemcheckbox' = 'menuitem';
+
+  @Input('cdkTriggerFor') templateRef: MenuPanelDirective;
+  mouseEnterEmitter = new Subject();
+
+  private _isFocused = false;
+
+  @Input('id')
+  set id(val: string) {
+    if (!this._id) {
+      this._id = val;
+    }
+  }
+  get id() {
+    return this._id || this._element.nativeElement.getAttribute('id');
+  }
+
+  get disabled() {
+    return this._element.nativeElement.getAttribute('disabled') || false;
+  }
+
+  constructor(
+    protected _overlay: Overlay,
+    protected _element: ElementRef,
+    protected _viewContainer: ViewContainerRef,
+    // need someway to set the initial state of the checkbox
+    // also need to emit events to update external components of changed state
+    private state: CheckboxStateService,
+    @Optional() protected _parentMenu?: MenuDirective,
+    @Optional() protected _parentMenuBar?: MenuBarDirective,
+    @Optional() private _group?: MenuGroupDirective
+  ) {
+    super();
+    if (_parentMenu) {
+      _parentMenu.registerChild(this);
+    }
+    if (_parentMenuBar) {
+      _parentMenuBar.registerChild(this);
+    }
+  }
+
+  private _checked() {
+    if (!!this._group && this.role === 'menuitemradio') {
+      return this._group.isActiveChild(this).toString();
+    } else if (this.role === 'menuitemcheckbox') {
+      return this.state.isChecked(this).toString();
+    }
+
+    return null;
+  }
+
+  onClick() {
+    if (!!this._group) {
+      this._group.setActiveChild(this);
+    }
+    this.state.toggle(this);
+    // check - do nothing if there is a child menu?
+    // TODO should this emit an event?
+    this.isMenuOpen() ? this.closeMenu() : this._openMenu();
+  }
+
+  mouseEnter() {
+    this.focus();
+    if ((!!this._parentMenuBar && this._parentMenuBar.hasOpenChild()) || !this._parentMenuBar) {
+      // only open on mouse enter if nothing else is open
+      !this._overlayRef && this._openMenu();
+      this.mouseEnterEmitter.next(this);
+    }
+  }
+
+  contains(el) {
+    return (
+      this._element.nativeElement.contains(el) ||
+      (this.templateRef && this.templateRef.child ? this.templateRef.child.contains(el) : false)
+    );
+  }
+
+  focus() {
+    // debug to determine which element has focus
+    this._element.nativeElement.focus();
+    this._isFocused = true;
+  }
+
+  getLabel() {
+    // TODO better way to get the label
+    return this._element.nativeElement.innerText;
+  }
+}
