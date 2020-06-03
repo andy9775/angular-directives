@@ -6,7 +6,7 @@ import {MenuDirective} from './menu.directive';
 import {Subject} from 'rxjs';
 import {MenuBarDirective} from './menu-bar.directive';
 import {FocusableOption, ListKeyManagerOption} from '@angular/cdk/a11y';
-import {RIGHT_ARROW, LEFT_ARROW} from '@angular/cdk/keycodes';
+import {RIGHT_ARROW, LEFT_ARROW, ESCAPE} from '@angular/cdk/keycodes';
 import {MenuGroupDirective} from './menu-group.directive';
 import {CheckboxStateService} from './checkbox-state.service';
 
@@ -68,15 +68,15 @@ abstract class MenuButton {
       this._overlayRef.attach(portal);
 
       this._setCloseHandlers();
-      if (this.templateRef.child) {
-        this.templateRef.child.closeEventEmitter.subscribe(() => {
-          this.closeMenu();
-        });
-        this.templateRef.child.tabEventEmitter.subscribe(() => {
-          this.closeMenu();
-          this.tabEventEmitter.next();
-        });
-      }
+
+      this.templateRef.child.closeEventEmitter.subscribe(() => {
+        this.closeMenu();
+        this.focus();
+      });
+      this.templateRef.child.tabEventEmitter.subscribe(() => {
+        this.closeMenu();
+        this.tabEventEmitter.next();
+      });
 
       this.templateRef.child.lablledBy = this.id;
 
