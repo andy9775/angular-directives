@@ -2,6 +2,7 @@ import {Directive, Input} from '@angular/core';
 import {MenuButtonDirective} from './menu-button.directive';
 import {RadioGroupSelectionService} from './radio-group-selection.service';
 
+// this and menu should provide a Updater
 @Directive({
   selector: '[appMenuGroup], [cdkMenuRadioGroup]',
   exportAs: 'cdkMenuRadioGroup',

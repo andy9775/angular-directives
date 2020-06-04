@@ -30,6 +30,7 @@ abstract class MenuButton {
   tabEventEmitter = new Subject();
 
   keyboardEventEmitter = new Subject<KeyboardEvent>();
+  closeEventEmitter = new Subject<void>();
 
   abstract focus(): void;
 
@@ -64,6 +65,8 @@ abstract class MenuButton {
     if (!!this.templateRef) {
       this._overlayRef = this._overlay.create({
         positionStrategy: this._getOverlayPositionStrategy(),
+        hasBackdrop: !!this._parentMenuBar,
+        backdropClass: '',
       });
       const portal = new TemplatePortal(this.templateRef.template, this._viewContainer);
       this._overlayRef.attach(portal);
@@ -81,6 +84,10 @@ abstract class MenuButton {
 
       this.templateRef.child.lablledBy = this.id;
 
+      // TODO have parent subscribe to these events and close out all sibling components
+      // Try to generalize the logic into a single keyboard handler but setting up the events
+      // correctly
+      this._overlayRef.backdropClick().subscribe(() => this.closeEventEmitter.next());
       this.templateRef.child.keyboardEventEmitter.subscribe((e: KeyboardEvent) => {
         const {keyCode} = e;
         switch (keyCode) {

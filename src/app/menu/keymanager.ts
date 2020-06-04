@@ -17,6 +17,8 @@ export class MenuKeyManager {
   protected _keyManager: FocusKeyManager<MenuButtonDirective>;
 
   closeEventEmitter = new Subject<void>();
+  // TODO keyboardEventEmitter will emit the tab event
+  // and it'll be up to the parent to decide to handle it.
   tabEventEmitter = new Subject<void>();
   keyboardEventEmitter = new Subject<KeyboardEvent>();
 

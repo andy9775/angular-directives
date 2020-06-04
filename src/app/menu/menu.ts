@@ -2,6 +2,8 @@ import {MenuButtonDirective} from './menu-button.directive';
 import {ElementRef, Input, Directive, Injectable} from '@angular/core';
 import {Subject} from 'rxjs';
 
+// TODO can we place the keymanager here?
+
 @Injectable()
 @Directive()
 /** @docs-private */
@@ -25,6 +27,8 @@ export abstract class RootMenu {
   abstract focusFirstChild(): void;
   abstract focusLastChild(): void;
 
+  // TODO do we need to check the sub-children or the nativeElement?
+  // Or is there another way?
   contains(el: MenuButtonDirective) {
     return (
       this._element.nativeElement.contains(el) ||
