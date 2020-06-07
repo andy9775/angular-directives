@@ -4,6 +4,24 @@ import {Subject} from 'rxjs';
 
 // TODO can we place the keymanager here?
 
+// TODO need menu interface which implements menu specific
+// methods and the MenuPanel should implement it
+
+export interface Menu {
+  closeEventEmitter: Subject<void>;
+  _keyboardEventEmitter: Subject<KeyboardEvent>;
+  // get rid of this
+  // tabEventEmitter: Subject<void>;
+  lablledBy: string;
+
+  getChildren(): Array<MenuButtonDirective>;
+  hasOpenChild(): boolean;
+  contains(el): any;
+
+  focusFirstChild(): void;
+  focusLastChild(): void;
+}
+
 @Injectable()
 @Directive()
 /** @docs-private */
@@ -46,14 +64,14 @@ export abstract class RootMenu {
     return this._children.map((c) => c.isMenuOpen()).includes(true);
   }
 
-  registerChild(child: MenuButtonDirective) {
-    child.mouseEnterEmitter.subscribe((element: MenuButtonDirective) => {
-      this._children.forEach((child) => {
-        if (child !== element) {
-          child.closeMenu();
-        }
-      });
-    });
-    this._children.push(child);
-  }
+  // registerChild(child: MenuButtonDirective) {
+  //   child.mouseEnterEmitter.subscribe((element: MenuButtonDirective) => {
+  //     this._children.forEach((child) => {
+  //       if (child !== element) {
+  //         child.closeMenu();
+  //       }
+  //     });
+  //   });
+  //   this._children.push(child);
+  // }
 }

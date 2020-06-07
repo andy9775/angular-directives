@@ -65,7 +65,7 @@
 
 <ng-template cdkMenuPanel #facts="cdkMenuPanel">
   <ul cdkMenu id="facts_menu">
-    <li role="none"><a id="history_button" cdkMenuItem>History</a></li>
+    <li role="none"><a id="history_button" [cdkTriggerFor]="history">History</a></li>
     <li role="none"><a id="stats_button" cdkMenuItem>Current Statistics</a></li>
     <li role="none"><a id="awards_button" cdkMenuItem>Awards</a></li>
   </ul>
@@ -101,6 +101,13 @@
         <li role="menuitemradio" id="black_button" cdkMenuItem>Black</li>
       </ul>
     </li>
+  </ul>
+</ng-template>
+
+<ng-template cdkMenuPanel #history="cdkMenuPanel">
+  <ul cdkMenu id="admissions_menu">
+    <li role="none"><a id="first_button" cdkMenuItem>First</a></li>
+    <li role="none"><a id="second_button" cdkMenuItem>Second</a></li>
   </ul>
 </ng-template>
 

@@ -2,14 +2,15 @@ import {Directive, ElementRef, Input, ViewContainerRef, Optional} from '@angular
 import {Overlay, OverlayRef} from '@angular/cdk/overlay';
 import {TemplatePortal} from '@angular/cdk/portal';
 import {MenuPanelDirective} from './menu-panel.directive';
-import {MenuDirective} from './menu.directive';
-import {Subject} from 'rxjs';
+// import {MenuDirective} from './menu.directive';
+import {Subject, Subscription} from 'rxjs';
+import {merge} from 'rxjs';
 import {MenuBarDirective} from './menu-bar.directive';
 import {FocusableOption, ListKeyManagerOption} from '@angular/cdk/a11y';
-import {RIGHT_ARROW, LEFT_ARROW, ESCAPE} from '@angular/cdk/keycodes';
+import {RIGHT_ARROW, LEFT_ARROW, ESCAPE, SPACE, ENTER} from '@angular/cdk/keycodes';
 import {MenuGroupDirective} from './menu-group.directive';
 import {CheckboxStateService} from './checkbox-state.service';
-import {RootMenu} from './menu';
+import {RootMenu, Menu} from './menu';
 
 @Directive()
 /** @docs-private */
@@ -18,11 +19,11 @@ abstract class MenuButton {
   abstract set id(val: string);
   protected _id: string;
 
-  abstract templateRef: MenuPanelDirective;
+  abstract _menuPanel: MenuPanelDirective;
   protected abstract _overlay: Overlay;
   protected abstract _element: ElementRef<HTMLElement>;
   protected abstract _viewContainer: ViewContainerRef;
-  protected abstract _parentMenu?: MenuDirective;
+  // protected abstract _parentMenu?: MenuDirective;
   protected abstract _parentMenuBar?: MenuBarDirective;
 
   protected _overlayRef: OverlayRef;
@@ -39,73 +40,73 @@ abstract class MenuButton {
   }
 
   hasSubmenu() {
-    return !!this.templateRef;
+    return !!this._menuPanel;
   }
 
   closeMenu() {
-    if (this.templateRef && this.templateRef.child) {
+    if (this._menuPanel && this._menuPanel) {
       // close out any potentially open children
-      this.templateRef.child
+      this._menuPanel
         .getChildren()
         .filter((c) => c.isMenuOpen())
         .forEach((child) => child.closeMenu());
-      this.templateRef.child.closeEventEmitter.unsubscribe();
+      this._menuPanel._menu.closeEventEmitter.unsubscribe();
     }
     // TODO better clean up
     if (this._overlayRef) {
       this._overlayRef.detach();
 
       this._overlayRef.dispose();
-
-      this._overlayRef = null;
     }
+    this._overlayRef = null;
   }
 
   protected _openMenu() {
-    if (!!this.templateRef) {
+    if (!!this._menuPanel) {
       this._overlayRef = this._overlay.create({
         positionStrategy: this._getOverlayPositionStrategy(),
         hasBackdrop: !!this._parentMenuBar,
         backdropClass: '',
       });
-      const portal = new TemplatePortal(this.templateRef.template, this._viewContainer);
+      const portal = new TemplatePortal(this._menuPanel.template, this._viewContainer);
       this._overlayRef.attach(portal);
 
       this._setCloseHandlers();
 
-      this.templateRef.child.closeEventEmitter.subscribe(() => {
-        this.closeMenu();
-        this.focus();
-      });
-      this.templateRef.child.tabEventEmitter.subscribe(() => {
-        this.closeMenu();
-        this.tabEventEmitter.next();
-      });
+      // this._menuPanel._menu.closeEventEmitter.subscribe(() => {
+      // this.closeMenu();
+      // this.focus();
+      // });
+      // this._menuPanel._menu.tabEventEmitter.subscribe(() => {
+      //   this.closeMenu();
+      //   this.tabEventEmitter.next();
+      // });
 
-      this.templateRef.child.lablledBy = this.id;
+      this._menuPanel._menu.lablledBy = this.id;
 
       // TODO have parent subscribe to these events and close out all sibling components
       // Try to generalize the logic into a single keyboard handler but setting up the events
       // correctly
-      this._overlayRef.backdropClick().subscribe(() => this.closeEventEmitter.next());
-      this.templateRef.child.keyboardEventEmitter.subscribe((e: KeyboardEvent) => {
-        const {keyCode} = e;
-        switch (keyCode) {
-          case LEFT_ARROW:
-            if (!!this._parentMenuBar) {
-              this.keyboardEventEmitter.next(e);
-            } else {
-              this.focus();
-            }
-            this.closeMenu();
+      // this._overlayRef.backdropClick().subscribe(() => this.closeEventEmitter.next());
+      //   this._menuPanel._keyboardEventEmitter.subscribe((e: KeyboardEvent) => {
+      //     const {keyCode} = e;
+      //     switch (keyCode) {
+      //       case LEFT_ARROW:
+      //         if (!!this._parentMenuBar) {
+      //           this.keyboardEventEmitter.next(e);
+      //         } else {
+      //           this.focus();
+      //         }
+      //         this.closeMenu();
 
-            break;
-          case RIGHT_ARROW:
-            this.keyboardEventEmitter.next(e);
-            this.closeMenu();
-            break;
-        }
-      });
+      //         break;
+      //       case RIGHT_ARROW:
+      //         this.keyboardEventEmitter.next(e);
+      //         this.closeMenu();
+      //         break;
+      //     }
+      //   });
+      // }
     }
   }
 
@@ -115,16 +116,16 @@ abstract class MenuButton {
       .flexibleConnectedTo(this._element)
       .setOrigin(this._element)
       .withPositions([
-        !!this._parentMenu
+        !!this._parentMenuBar
           ? {
-              originX: 'end',
-              originY: 'top',
+              originX: 'start',
+              originY: 'bottom',
               overlayX: 'start',
               overlayY: 'top',
             }
           : {
-              originX: 'start',
-              originY: 'bottom',
+              originX: 'end',
+              originY: 'top',
               overlayX: 'start',
               overlayY: 'top',
             },
@@ -149,12 +150,14 @@ abstract class MenuButton {
   host: {
     '(blur)': '_isFocused = false',
     '(mouseenter)': 'mouseEnter()',
+    // '(keydown)': '_handleKeyDown($event)',
     '(click)': 'onClick()',
     // a11y
     '[attr.role]': 'role',
     type: 'button', // necessary ??
     // only has 0 tab index if focused and is a button inside the menuBar
-    '[tabindex]': '(_isFocused && !!_parentMenu) ? "0" : "-1"', // check if disabled
+    '[tabindex]': '(_isFocused && !_parentMenuBar) ? "0" : "-1"', // check if disabledj
+    // '[tabindex]': '(_isFocused && !!_parentMenu) ? "0" : "-1"', // check if disabled
     '[attr.aria-haspopup]': '!!templateRef ? "menu" : "false"', // only if it has a ref??
     '[attr.aria-expanded]': '!!templateRef ? !!_overlayRef : null',
     '[attr.aria-checked]': '_checked()',
@@ -171,7 +174,10 @@ export class MenuButtonDirective extends MenuButton
   // and see if that is this button (or parentMenu.isChecked(menButton) )
   @Input() role: 'menuitem' | 'menuitemradio' | 'menuitemcheckbox' = 'menuitem';
 
-  @Input('cdkTriggerFor') templateRef: MenuPanelDirective;
+  @Input('cdkTriggerFor') _menuPanel: MenuPanelDirective;
+  get _menu() {
+    return this._menuPanel;
+  }
   mouseEnterEmitter = new Subject();
 
   private _isFocused = false;
@@ -197,17 +203,15 @@ export class MenuButtonDirective extends MenuButton
     // need someway to set the initial state of the checkbox
     // also need to emit events to update external components of changed state
     private state: CheckboxStateService,
-    @Optional() protected _parentMenu?: MenuDirective,
+    // @Optional() protected _parentMenu?: MenuDirective,
     @Optional() protected _parentMenuBar?: MenuBarDirective,
     @Optional() private _group?: MenuGroupDirective
   ) {
     super();
-    if (_parentMenu) {
-      _parentMenu.registerChild(this);
-    }
-    if (_parentMenuBar) {
-      _parentMenuBar.registerChild(this);
-    }
+  }
+
+  _isItem() {
+    return this.role === 'menuitem';
   }
 
   private _checked() {
@@ -232,17 +236,19 @@ export class MenuButtonDirective extends MenuButton
 
   mouseEnter() {
     this.focus();
+    // get rid of this logic - we shouldn't care about whether the parent has open child.
     if ((!!this._parentMenuBar && this._parentMenuBar.hasOpenChild()) || !this._parentMenuBar) {
       // only open on mouse enter if nothing else is open
       !this._overlayRef && this._openMenu();
+      // this._hovered.next(this);
       this.mouseEnterEmitter.next(this);
     }
   }
 
   contains(el) {
     return (
-      this._element.nativeElement.contains(el) ||
-      (this.templateRef && this.templateRef.child ? this.templateRef.child.contains(el) : false)
+      (this._element.nativeElement && this._element.nativeElement.contains(el)) ||
+      (this._menuPanel && this._menuPanel ? this._menuPanel.contains(el) : false)
     );
   }
 

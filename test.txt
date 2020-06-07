@@ -1,0 +1,17 @@
+remove from menu-bar.directive.ts
+
+// no need for child buttons to register themselves with the parent
+registerChild(child: MenuButtonDirective) {
+    super.registerChild(child);
+    console.log('register');
+
+    child.keyboardEventEmitter.subscribe((e) => {
+      // do we need to register this here?
+      // can we move this logic into the _keyManager?
+      // TODO determine when this fires? Only in open children?
+      this._keyManager.keydown(e);
+    });
+    if (child._menuPanel) {
+      child._menuPanel._menu.closeEventEmitter.subscribe(() => this.closeEventEmitter.next());
+    }
+  }
