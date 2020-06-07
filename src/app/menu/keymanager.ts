@@ -98,7 +98,7 @@ export class MenuKeyboardManager {
   }
 
   handleEvent(event: KeyboardEvent, bubbled = false) {
-    const activeItem = this._keyManager.activeItem;
+    let activeItem = this._keyManager.activeItem;
     switch (event.keyCode) {
       case ENTER:
       case SPACE:
@@ -121,6 +121,7 @@ export class MenuKeyboardManager {
         if (this._isHorizontal()) {
           const prev = this._keyManager.activeItem;
           this._keyManager.onKeydown(event);
+          activeItem = this._keyManager.activeItem;
           if (prev.isMenuOpen() && activeItem.hasSubmenu()) {
             activeItem.onClick();
           }
@@ -141,7 +142,9 @@ export class MenuKeyboardManager {
         if (this._isHorizontal()) {
           const prev = this._keyManager.activeItem;
           this._keyManager.onKeydown(event);
+          activeItem = this._keyManager.activeItem;
           if (prev.isMenuOpen() && activeItem.hasSubmenu()) {
+            console.log('handle: ', prev.id, activeItem.id);
             activeItem.onClick();
             prev.onClick();
           }
