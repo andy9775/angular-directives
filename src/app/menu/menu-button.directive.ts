@@ -110,14 +110,11 @@ abstract class MenuButton {
   host: {
     '(blur)': '_isFocused = false',
     '(mouseenter)': '_emitMouseFocus()',
-    // '(keydown)': '_handleKeyDown($event)',
     '(click)': 'onClick()',
     // a11y
     '[attr.role]': 'role',
-    type: 'button', // necessary ??
-    // only has 0 tab index if focused and is a button inside the menuBar
+    type: 'button',
     '[tabindex]': '_tabIndex', // check if disabledj
-    // '[tabindex]': '(_isFocused && !!_parentMenu) ? "0" : "-1"', // check if disabled
     '[attr.aria-haspopup]': '!!_menuPanel ? "menu" : "false"', // only if it has a ref??
     '[attr.aria-expanded]': '!!_menuPanel ? !!_overlayRef : null',
     '[attr.aria-checked]': '_checked()',
