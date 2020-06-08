@@ -1,15 +1,15 @@
 import {NgModule} from '@angular/core';
 import {CommonModule} from '@angular/common';
 import {MenuPanelDirective} from './menu-panel.directive';
-import {MenuBarDirective} from './menu-bar.directive';
+import {MenuDirective} from './menu-bar.directive';
 import {MenuButtonDirective} from './menu-button.directive';
-import {MenuDirective} from './menu.directive';
+// import {MenuDirective} from './menu.directive';
 import {MenuGroupDirective} from './menu-group.directive';
 
 @NgModule({
   declarations: [
     MenuPanelDirective,
-    MenuBarDirective,
+    // MenuBarDirective,
     MenuButtonDirective,
     MenuDirective,
     MenuGroupDirective,
@@ -17,7 +17,7 @@ import {MenuGroupDirective} from './menu-group.directive';
   imports: [CommonModule],
   exports: [
     MenuPanelDirective,
-    MenuBarDirective,
+    // MenuBarDirective,
     MenuButtonDirective,
     MenuDirective,
     MenuGroupDirective,

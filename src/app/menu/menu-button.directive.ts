@@ -4,12 +4,11 @@ import {TemplatePortal} from '@angular/cdk/portal';
 import {MenuPanelDirective} from './menu-panel.directive';
 // import {MenuDirective} from './menu.directive';
 import {Subject, Subscription} from 'rxjs';
-import {merge} from 'rxjs';
-import {MenuBarDirective} from './menu-bar.directive';
 import {FocusableOption, ListKeyManagerOption} from '@angular/cdk/a11y';
 import {RIGHT_ARROW, LEFT_ARROW, ESCAPE, SPACE, ENTER} from '@angular/cdk/keycodes';
 import {MenuGroupDirective} from './menu-group.directive';
 import {CheckboxStateService} from './checkbox-state.service';
+import {MenuDirective} from './menu-bar.directive';
 
 @Directive()
 /** @docs-private */
@@ -23,7 +22,7 @@ abstract class MenuButton {
   protected abstract _element: ElementRef<HTMLElement>;
   protected abstract _viewContainer: ViewContainerRef;
   // protected abstract _parentMenu?: MenuDirective;
-  protected abstract _parentMenuBar?: MenuBarDirective;
+  protected abstract _parent?: MenuDirective;
 
   protected _overlayRef: OverlayRef;
 
@@ -47,6 +46,10 @@ abstract class MenuButton {
     if (this._overlayRef) {
       this._overlayRef.detach();
       this._overlayRef.dispose();
+      this._menuPanel._menu
+        .getChildren()
+        .filter((c) => c.isMenuOpen())
+        .forEach((c) => c.onClick());
     }
     this._overlayRef = null;
   }
@@ -55,8 +58,7 @@ abstract class MenuButton {
     if (!!this._menuPanel) {
       this._overlayRef = this._overlay.create({
         positionStrategy: this._getOverlayPositionStrategy(),
-        // hasBackdrop: !!this._parentMenuBar,
-        // backdropClass: '',
+        // hasBackdrop: this._parent._role === 'menubar',
       });
       const portal = new TemplatePortal(this._menuPanel.template, this._viewContainer);
       this._overlayRef.attach(portal);
@@ -72,7 +74,7 @@ abstract class MenuButton {
       .flexibleConnectedTo(this._element)
       .setOrigin(this._element)
       .withPositions([
-        !!this._parentMenuBar
+        this._parent._orientation === 'horizontal'
           ? {
               originX: 'start',
               originY: 'bottom',
@@ -163,7 +165,7 @@ export class MenuButtonDirective extends MenuButton
     // also need to emit events to update external components of changed state
     private state: CheckboxStateService,
     // @Optional() protected _parentMenu?: MenuDirective,
-    @Optional() protected _parentMenuBar?: MenuBarDirective,
+    @Optional() protected _parent?: MenuDirective,
     @Optional() private _group?: MenuGroupDirective
   ) {
     super();
@@ -196,15 +198,6 @@ export class MenuButtonDirective extends MenuButton
     // TODO should this emit an event?
     this.isMenuOpen() ? this.closeMenu() : this._openMenu();
     this.activateEventEmitter.next(this);
-  }
-
-  contains(el) {
-    return (
-      (this._element.nativeElement && this._element.nativeElement.contains(el)) ||
-      (this._menuPanel && this._menuPanel
-        ? this._menuPanel._menu && this._menuPanel._menu.contains(el)
-        : false)
-    );
   }
 
   focus() {

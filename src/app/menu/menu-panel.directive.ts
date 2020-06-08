@@ -1,9 +1,5 @@
-import {Directive, TemplateRef, ContentChild, OnDestroy, QueryList, Input} from '@angular/core';
-import {MenuDirective} from './menu.directive';
-import {Subject, Subscription} from 'rxjs';
-import {takeUntil} from 'rxjs/operators';
-import {MenuButtonDirective} from './menu-button.directive';
-import {MenuMouseManager} from './mouse-manager';
+import {Directive, TemplateRef, Input} from '@angular/core';
+import {MenuDirective} from './menu-bar.directive';
 
 let _uniqueId = 0;
 @Directive({
