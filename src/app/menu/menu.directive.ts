@@ -9,7 +9,7 @@ import {
 } from '@angular/core';
 import {MenuPanelDirective} from './menu-panel.directive';
 import {MenuButtonDirective} from './menu-button.directive';
-import {RootMenu, Menu} from './menu';
+import {RootMenu} from './menu';
 import {MenuKeyboardManager} from './keymanager';
 import {MenuMouseManager} from './mouse-manager';
 
@@ -28,10 +28,10 @@ import {MenuMouseManager} from './mouse-manager';
     '[attr.aria-lablledby]': 'lablledBy',
   },
 })
-export class MenuDirective extends RootMenu implements AfterContentInit, OnDestroy, Menu {
+export class MenuDirective extends RootMenu implements AfterContentInit, OnDestroy {
   @Input('cdkMenuOrientation') orientation: 'horizontal' | 'vertical' = 'vertical';
 
-  private _keyManager: MenuKeyboardManager;
+  _keyManager: MenuKeyboardManager;
   _mouseManager: MenuMouseManager;
 
   @ContentChildren(MenuButtonDirective, {descendants: true}) private readonly _allItems: QueryList<

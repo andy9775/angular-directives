@@ -44,19 +44,19 @@ export class MenuKeyboardManager {
     } else {
       this._keyManager = this._keyManager.withVerticalOrientation();
     }
+  }
 
-    this._keyManager.change.subscribe(() => {
-      this._destroyKeyboardSubscription.next();
-      // bubble up keyboard events which aren't handled in the child
-      // and handle them here.
-      if (this._keyManager.activeItem.hasSubmenu()) {
-        this._keyManager.activeItem._menu._keyboardEventEmitter
-          .pipe(takeUntil(this._destroyKeyboardSubscription))
-          .subscribe((e) => {
-            this.handleEvent(e, true);
-          });
-      }
-    });
+  private _subscribe() {
+    this._destroyKeyboardSubscription.next();
+    // bubble up keyboard events which aren't handled in the child
+    // and handle them here.
+    if (this._keyManager.activeItem.hasSubmenu()) {
+      this._keyManager.activeItem._menuPanel._menu._keyManager._keyboardEventEmitter
+        .pipe(takeUntil(this._destroyKeyboardSubscription))
+        .subscribe((e) => {
+          this.handleEvent(e, true);
+        });
+    }
   }
 
   focusFirstItem() {
@@ -90,8 +90,9 @@ export class MenuKeyboardManager {
           event.preventDefault();
           activeItem.onClick();
           if (activeItem.isMenuOpen()) {
-            activeItem._menu.focusFirstChild();
+            activeItem._menuPanel._menu.focusFirstChild();
           }
+          this._subscribe();
         }
         if (bubbled && activeItem.isMenuOpen()) {
           activeItem.onClick();
@@ -135,7 +136,8 @@ export class MenuKeyboardManager {
         } else {
           if (activeItem && activeItem.hasSubmenu() && !bubbled) {
             activeItem.onClick();
-            activeItem._menu.focusFirstChild();
+            activeItem._menuPanel._menu.focusFirstChild();
+            this._subscribe();
           } else {
             if (activeItem.isMenuOpen()) {
               activeItem.onClick();
@@ -152,9 +154,10 @@ export class MenuKeyboardManager {
             if (!activeItem.isMenuOpen()) {
               activeItem.onClick();
             }
+            this._subscribe();
             event.keyCode === DOWN_ARROW
-              ? activeItem._menu.focusFirstChild()
-              : activeItem._menu.focusLastChild();
+              ? activeItem._menuPanel._menu.focusFirstChild()
+              : activeItem._menuPanel._menu.focusLastChild();
           }
         } else {
           this._keyManager.onKeydown(event);
@@ -163,8 +166,8 @@ export class MenuKeyboardManager {
       case HOME:
       case END:
         event.keyCode === HOME
-          ? activeItem._menu.focusFirstChild()
-          : activeItem._menu.focusLastChild();
+          ? activeItem._menuPanel._menu.focusFirstChild()
+          : activeItem._menuPanel._menu.focusLastChild();
         break;
       case ESCAPE:
         if (activeItem && activeItem.isMenuOpen()) {

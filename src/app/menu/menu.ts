@@ -2,28 +2,24 @@ import {MenuButtonDirective} from './menu-button.directive';
 import {ElementRef, Input, Directive, Injectable, QueryList} from '@angular/core';
 import {Subject} from 'rxjs';
 import {MenuMouseManager} from './mouse-manager';
+import {MenuKeyboardManager} from './keymanager';
 
 // TODO can we place the keymanager here?
 
 // TODO need menu interface which implements menu specific
 // methods and the MenuPanel should implement it
 
-export interface Menu {
-  // closeEventEmitter: Subject<void>;
-  _keyboardEventEmitter: Subject<KeyboardEvent>;
-  // _activationEventEmitter: Subject<MenuButtonDirective>;
-  // get rid of this
-  // tabEventEmitter: Subject<void>;
-  _mouseManager: MenuMouseManager;
-  lablledBy: string;
+// export interface Menu {
+//   _mouseManager: MenuMouseManager;
+//   _keyManager: MenuKeyboardManager;
 
-  getChildren(): QueryList<MenuButtonDirective>;
-  hasOpenChild(): boolean;
-  contains(el): any;
+//   getChildren(): QueryList<MenuButtonDirective>;
+//   hasOpenChild(): boolean;
+//   contains(el): any;
 
-  focusFirstChild(): void;
-  focusLastChild(): void;
-}
+//   focusFirstChild(): void;
+//   focusLastChild(): void;
+// }
 
 @Injectable()
 @Directive()

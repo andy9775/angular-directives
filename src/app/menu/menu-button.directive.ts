@@ -10,7 +10,6 @@ import {FocusableOption, ListKeyManagerOption} from '@angular/cdk/a11y';
 import {RIGHT_ARROW, LEFT_ARROW, ESCAPE, SPACE, ENTER} from '@angular/cdk/keycodes';
 import {MenuGroupDirective} from './menu-group.directive';
 import {CheckboxStateService} from './checkbox-state.service';
-import {RootMenu, Menu} from './menu';
 
 @Directive()
 /** @docs-private */
@@ -63,7 +62,7 @@ abstract class MenuButton {
       this._overlayRef.attach(portal);
 
       this._setCloseHandlers();
-      this._menuPanel.lablledBy = this.id;
+      // this._menuPanel._menu.lablledBy = this.id;
     }
   }
 
@@ -132,9 +131,7 @@ export class MenuButtonDirective extends MenuButton
   @Input() role: 'menuitem' | 'menuitemradio' | 'menuitemcheckbox' = 'menuitem';
 
   @Input('cdkTriggerFor') _menuPanel: MenuPanelDirective;
-  get _menu(): Menu {
-    return this._menuPanel;
-  }
+
   mouseEnterEmitter = new Subject();
 
   focusEventEmitter: Subject<MenuButtonDirective | void> = new Subject();
@@ -202,7 +199,9 @@ export class MenuButtonDirective extends MenuButton
   contains(el) {
     return (
       (this._element.nativeElement && this._element.nativeElement.contains(el)) ||
-      (this._menuPanel && this._menuPanel ? this._menuPanel.contains(el) : false)
+      (this._menuPanel && this._menuPanel
+        ? this._menuPanel._menu && this._menuPanel._menu.contains(el)
+        : false)
     );
   }
 
