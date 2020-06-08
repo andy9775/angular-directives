@@ -11,9 +11,10 @@ import {MenuMouseManager} from './mouse-manager';
 export interface Menu {
   // closeEventEmitter: Subject<void>;
   _keyboardEventEmitter: Subject<KeyboardEvent>;
-  _activationEventEmitter: Subject<MenuButtonDirective>;
+  // _activationEventEmitter: Subject<MenuButtonDirective>;
   // get rid of this
   // tabEventEmitter: Subject<void>;
+  _mouseManager: MenuMouseManager;
   lablledBy: string;
 
   getChildren(): QueryList<MenuButtonDirective>;

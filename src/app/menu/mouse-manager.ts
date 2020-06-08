@@ -72,7 +72,7 @@ export class MenuMouseManager {
 
   private _handleActivatedButton(_button: MenuButtonDirective) {
     if (_button.hasSubmenu() && _button.isMenuOpen()) {
-      _button._menu._activationEventEmitter
+      _button._menuPanel._menu._mouseManager._activationEventEmitter
         .pipe(takeUntil(this._destroyMouseSubscription))
         .subscribe((b) => {
           this._activationEventEmitter.next(b);

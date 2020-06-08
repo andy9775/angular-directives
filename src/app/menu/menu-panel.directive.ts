@@ -11,10 +11,10 @@ import {MenuMouseManager} from './mouse-manager';
   exportAs: 'cdkMenuPanel',
 })
 export class MenuPanelDirective implements OnDestroy, Menu {
-  private _menu: Menu;
+  _menu: Menu;
   _keyboardEventEmitter = new Subject<KeyboardEvent>();
   _mouseEventEmitter = new Subject<MouseEvent>();
-  _activationEventEmitter = new Subject<MenuButtonDirective>();
+  // _activationEventEmitter = new Subject<MenuButtonDirective>();
   closeEventEmitter: Subject<void>;
 
   // get rid of this
@@ -26,6 +26,11 @@ export class MenuPanelDirective implements OnDestroy, Menu {
     return this._menu.lablledBy;
   }
 
+  // TODO remove this and remote Menu interface
+  get _mouseManager() {
+    return this._menu._mouseManager;
+  }
+
   private readonly _destroy = new Subject<void>();
 
   constructor(public template: TemplateRef<HTMLElement>) {}
@@ -35,9 +40,9 @@ export class MenuPanelDirective implements OnDestroy, Menu {
     child._keyboardEventEmitter.pipe(takeUntil(this._destroy)).subscribe((e) => {
       this._keyboardEventEmitter.next(e);
     });
-    child._activationEventEmitter
-      .pipe(takeUntil(this._destroy))
-      .subscribe((b) => this._activationEventEmitter.next(b));
+    // child._activationEventEmitter
+    //   .pipe(takeUntil(this._destroy))
+    //   .subscribe((b) => this._activationEventEmitter.next(b));
   }
 
   getChildren(): QueryList<MenuButtonDirective> {

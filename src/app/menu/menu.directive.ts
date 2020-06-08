@@ -42,9 +42,9 @@ export class MenuDirective extends RootMenu implements AfterContentInit, OnDestr
     return this._keyManager._keyboardEventEmitter;
   }
 
-  get _activationEventEmitter() {
-    return this._mouseManager._activationEventEmitter;
-  }
+  // get _activationEventEmitter() {
+  //   return this._mouseManager._activationEventEmitter;
+  // }
 
   lablledBy: string | null = null;
 
