@@ -14,6 +14,7 @@ import {Subject} from 'rxjs';
 import {MenuMouseManager} from './mouse-manager';
 import {MenuPanelDirective} from './menu-panel.directive';
 import {FocusEmitter} from './focus-emitter';
+import {ActivationEmitter} from './activation-emitter';
 
 /*
   TODO
@@ -32,7 +33,7 @@ import {FocusEmitter} from './focus-emitter';
     '[attr.aria-lablledby]': 'lablledBy',
     // '(document:click)': '_closeHandler.doClick($event)',
   },
-  providers: [FocusEmitter],
+  providers: [FocusEmitter, ActivationEmitter],
 })
 export class MenuDirective implements AfterContentInit {
   // according to the aria spec, menu bars have horizontal default orientation
@@ -59,6 +60,7 @@ export class MenuDirective implements AfterContentInit {
   constructor(
     protected _element: ElementRef,
     @Self() private _focusEmitter: FocusEmitter,
+    @Self() private _activationEmitter: ActivationEmitter,
     @Optional() private _parent: MenuPanelDirective
   ) {
     this._isMenuBar = _element.nativeElement.matches('[cdkmenubar]');
@@ -88,6 +90,7 @@ export class MenuDirective implements AfterContentInit {
       this._keyManager,
       this._allItems,
       this._focusEmitter,
+      this._activationEmitter,
       this._role === 'menu'
     );
   }

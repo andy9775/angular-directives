@@ -10,6 +10,7 @@ import {MenuGroupDirective} from './menu-group.directive';
 import {CheckboxStateService} from './checkbox-state.service';
 import {MenuDirective} from './menu-bar.directive';
 import {FocusEmitter} from './focus-emitter';
+import {ActivationEmitter} from './activation-emitter';
 
 @Directive()
 /** @docs-private */
@@ -137,11 +138,6 @@ export class MenuButtonDirective extends MenuButton
 
   @Input('cdkTriggerFor') _menuPanel: MenuPanelDirective;
 
-  mouseEnterEmitter = new Subject();
-
-  focusEventEmitter: Subject<MenuButtonDirective | void> = new Subject();
-  activateEventEmitter: Subject<MenuButtonDirective> = new Subject();
-
   private _isFocused = false;
 
   @Input('id')
@@ -166,6 +162,7 @@ export class MenuButtonDirective extends MenuButton
     // also need to emit events to update external components of changed state
     private state: CheckboxStateService,
     private _focusEmitter: FocusEmitter,
+    private _activationEmitter: ActivationEmitter,
     // @Optional() protected _parentMenu?: MenuDirective,
     @Optional() protected _parent?: MenuDirective,
     @Optional() private _group?: MenuGroupDirective
@@ -178,7 +175,6 @@ export class MenuButtonDirective extends MenuButton
   }
 
   private _emitMouseFocus() {
-    this.focusEventEmitter.next(this);
     this._focusEmitter.focus.next(this);
   }
 
@@ -200,14 +196,13 @@ export class MenuButtonDirective extends MenuButton
     // check - do nothing if there is a child menu?
     // TODO should this emit an event?
     this.isMenuOpen() ? this.closeMenu() : this._openMenu();
-    this.activateEventEmitter.next(this);
+    this._activationEmitter.activate.next(this);
   }
 
   focus() {
     // debug to determine which element has focus
     this._element.nativeElement.focus();
     this._isFocused = true;
-    this.focusEventEmitter.next();
   }
 
   getLabel() {

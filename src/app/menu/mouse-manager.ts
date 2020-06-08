@@ -4,6 +4,7 @@ import {MenuButtonDirective} from './menu-button.directive';
 import {Subject} from 'rxjs';
 import {filter, takeUntil} from 'rxjs/operators';
 import {FocusEmitter} from './focus-emitter';
+import {ActivationEmitter} from './activation-emitter';
 
 /*
 
@@ -18,6 +19,7 @@ export class MenuMouseManager {
     private readonly _keyManager: MenuKeyboardManager,
     private readonly _children: QueryList<MenuButtonDirective>,
     private readonly _focusEmiter: FocusEmitter,
+    private readonly _activationEmitter: ActivationEmitter,
     private readonly _openOnHover: boolean = false // whether to open a button's submenu on hover
   ) {
     _focusEmiter.focus
@@ -27,11 +29,9 @@ export class MenuMouseManager {
       )
       .subscribe(this._handleFocusChange.bind(this));
 
-    _children.forEach((button) => {
-      button.activateEventEmitter
-        .pipe(takeUntil(this._destroyMouseSubscription))
-        .subscribe(this._handleActivatedButton.bind(this));
-    });
+    _activationEmitter.activate
+      .pipe(takeUntil(this._destroyMouseSubscription))
+      .subscribe(this._handleActivatedButton.bind(this));
 
     this._activationEventEmitter
       .pipe(takeUntil(this._destroyMouseSubscription))
