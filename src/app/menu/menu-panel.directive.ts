@@ -1,17 +1,20 @@
-import {Directive, TemplateRef, ContentChild, OnDestroy} from '@angular/core';
+import {Directive, TemplateRef, ContentChild, OnDestroy, QueryList} from '@angular/core';
 import {MenuDirective} from './menu.directive';
 import {Menu} from './menu';
 import {Subject, Subscription} from 'rxjs';
 import {takeUntil} from 'rxjs/operators';
 import {MenuButtonDirective} from './menu-button.directive';
+import {MenuMouseManager} from './mouse-manager';
 
 @Directive({
   selector: '[appMenuPanel], [cdkMenuPanel]',
   exportAs: 'cdkMenuPanel',
 })
 export class MenuPanelDirective implements OnDestroy, Menu {
-  _menu: Menu;
+  private _menu: Menu;
   _keyboardEventEmitter = new Subject<KeyboardEvent>();
+  _mouseEventEmitter = new Subject<MouseEvent>();
+  _activationEventEmitter = new Subject<MenuButtonDirective>();
   closeEventEmitter: Subject<void>;
 
   // get rid of this
@@ -27,22 +30,17 @@ export class MenuPanelDirective implements OnDestroy, Menu {
 
   constructor(public template: TemplateRef<HTMLElement>) {}
 
-  registerChildMenu(child: MenuDirective) {
+  registerMenu(child: MenuDirective) {
     this._menu = child;
     child._keyboardEventEmitter.pipe(takeUntil(this._destroy)).subscribe((e) => {
       this._keyboardEventEmitter.next(e);
     });
-    child.closeEventEmitter
+    child._activationEventEmitter
       .pipe(takeUntil(this._destroy))
-      .subscribe(() => this.closeEventEmitter.next());
+      .subscribe((b) => this._activationEventEmitter.next(b));
   }
 
-  ngOnDestroy() {
-    this._destroy.next();
-    this._destroy.complete();
-  }
-
-  getChildren(): Array<MenuButtonDirective> {
+  getChildren(): QueryList<MenuButtonDirective> {
     return this._menu.getChildren();
   }
   hasOpenChild(): boolean {
@@ -56,5 +54,10 @@ export class MenuPanelDirective implements OnDestroy, Menu {
   }
   focusLastChild() {
     this._menu.focusLastChild();
+  }
+
+  ngOnDestroy() {
+    this._destroy.next();
+    this._destroy.complete();
   }
 }

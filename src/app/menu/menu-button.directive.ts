@@ -44,18 +44,9 @@ abstract class MenuButton {
   }
 
   closeMenu() {
-    if (this._menuPanel && this._menuPanel) {
-      // close out any potentially open children
-      this._menuPanel
-        .getChildren()
-        .filter((c) => c.isMenuOpen())
-        .forEach((child) => child.closeMenu());
-      this._menuPanel._menu.closeEventEmitter.unsubscribe();
-    }
     // TODO better clean up
     if (this._overlayRef) {
       this._overlayRef.detach();
-
       this._overlayRef.dispose();
     }
     this._overlayRef = null;
@@ -65,48 +56,14 @@ abstract class MenuButton {
     if (!!this._menuPanel) {
       this._overlayRef = this._overlay.create({
         positionStrategy: this._getOverlayPositionStrategy(),
-        hasBackdrop: !!this._parentMenuBar,
-        backdropClass: '',
+        // hasBackdrop: !!this._parentMenuBar,
+        // backdropClass: '',
       });
       const portal = new TemplatePortal(this._menuPanel.template, this._viewContainer);
       this._overlayRef.attach(portal);
 
       this._setCloseHandlers();
-
-      // this._menuPanel._menu.closeEventEmitter.subscribe(() => {
-      // this.closeMenu();
-      // this.focus();
-      // });
-      // this._menuPanel._menu.tabEventEmitter.subscribe(() => {
-      //   this.closeMenu();
-      //   this.tabEventEmitter.next();
-      // });
-
-      this._menuPanel._menu.lablledBy = this.id;
-
-      // TODO have parent subscribe to these events and close out all sibling components
-      // Try to generalize the logic into a single keyboard handler but setting up the events
-      // correctly
-      // this._overlayRef.backdropClick().subscribe(() => this.closeEventEmitter.next());
-      //   this._menuPanel._keyboardEventEmitter.subscribe((e: KeyboardEvent) => {
-      //     const {keyCode} = e;
-      //     switch (keyCode) {
-      //       case LEFT_ARROW:
-      //         if (!!this._parentMenuBar) {
-      //           this.keyboardEventEmitter.next(e);
-      //         } else {
-      //           this.focus();
-      //         }
-      //         this.closeMenu();
-
-      //         break;
-      //       case RIGHT_ARROW:
-      //         this.keyboardEventEmitter.next(e);
-      //         this.closeMenu();
-      //         break;
-      //     }
-      //   });
-      // }
+      this._menuPanel.lablledBy = this.id;
     }
   }
 
@@ -149,7 +106,7 @@ abstract class MenuButton {
   exportAs: 'cdkMenuItem',
   host: {
     '(blur)': '_isFocused = false',
-    '(mouseenter)': 'mouseEnter()',
+    '(mouseenter)': '_emitMouseFocus()',
     // '(keydown)': '_handleKeyDown($event)',
     '(click)': 'onClick()',
     // a11y
@@ -175,10 +132,13 @@ export class MenuButtonDirective extends MenuButton
   @Input() role: 'menuitem' | 'menuitemradio' | 'menuitemcheckbox' = 'menuitem';
 
   @Input('cdkTriggerFor') _menuPanel: MenuPanelDirective;
-  get _menu() {
+  get _menu(): Menu {
     return this._menuPanel;
   }
   mouseEnterEmitter = new Subject();
+
+  focusEventEmitter: Subject<MenuButtonDirective | void> = new Subject();
+  activateEventEmitter: Subject<MenuButtonDirective> = new Subject();
 
   private _isFocused = false;
 
@@ -214,6 +174,10 @@ export class MenuButtonDirective extends MenuButton
     return this.role === 'menuitem';
   }
 
+  private _emitMouseFocus() {
+    this.focusEventEmitter.next(this);
+  }
+
   private _checked() {
     if (!!this._group && this.role === 'menuitemradio') {
       return this._group.isActiveChild(this).toString();
@@ -232,17 +196,7 @@ export class MenuButtonDirective extends MenuButton
     // check - do nothing if there is a child menu?
     // TODO should this emit an event?
     this.isMenuOpen() ? this.closeMenu() : this._openMenu();
-  }
-
-  mouseEnter() {
-    this.focus();
-    // get rid of this logic - we shouldn't care about whether the parent has open child.
-    if ((!!this._parentMenuBar && this._parentMenuBar.hasOpenChild()) || !this._parentMenuBar) {
-      // only open on mouse enter if nothing else is open
-      !this._overlayRef && this._openMenu();
-      // this._hovered.next(this);
-      this.mouseEnterEmitter.next(this);
-    }
+    this.activateEventEmitter.next(this);
   }
 
   contains(el) {
@@ -256,6 +210,7 @@ export class MenuButtonDirective extends MenuButton
     // debug to determine which element has focus
     this._element.nativeElement.focus();
     this._isFocused = true;
+    this.focusEventEmitter.next();
   }
 
   getLabel() {

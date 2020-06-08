@@ -1,6 +1,7 @@
 import {MenuButtonDirective} from './menu-button.directive';
-import {ElementRef, Input, Directive, Injectable} from '@angular/core';
+import {ElementRef, Input, Directive, Injectable, QueryList} from '@angular/core';
 import {Subject} from 'rxjs';
+import {MenuMouseManager} from './mouse-manager';
 
 // TODO can we place the keymanager here?
 
@@ -8,13 +9,14 @@ import {Subject} from 'rxjs';
 // methods and the MenuPanel should implement it
 
 export interface Menu {
-  closeEventEmitter: Subject<void>;
+  // closeEventEmitter: Subject<void>;
   _keyboardEventEmitter: Subject<KeyboardEvent>;
+  _activationEventEmitter: Subject<MenuButtonDirective>;
   // get rid of this
   // tabEventEmitter: Subject<void>;
   lablledBy: string;
 
-  getChildren(): Array<MenuButtonDirective>;
+  getChildren(): QueryList<MenuButtonDirective>;
   hasOpenChild(): boolean;
   contains(el): any;
 
@@ -27,7 +29,6 @@ export interface Menu {
 /** @docs-private */
 export abstract class RootMenu {
   private _children: Array<MenuButtonDirective> = new Array<MenuButtonDirective>();
-  abstract get closeEventEmitter(): Subject<void>;
 
   protected abstract _element: ElementRef;
 
@@ -50,28 +51,17 @@ export abstract class RootMenu {
   contains(el: MenuButtonDirective) {
     return (
       this._element.nativeElement.contains(el) ||
-      this.getChildren()
+      this._getChildren()
         .map((c) => c.contains(el))
         .includes(true)
     );
   }
 
-  getChildren() {
+  _getChildren() {
     return this._children;
   }
 
   hasOpenChild() {
     return this._children.map((c) => c.isMenuOpen()).includes(true);
   }
-
-  // registerChild(child: MenuButtonDirective) {
-  //   child.mouseEnterEmitter.subscribe((element: MenuButtonDirective) => {
-  //     this._children.forEach((child) => {
-  //       if (child !== element) {
-  //         child.closeMenu();
-  //       }
-  //     });
-  //   });
-  //   this._children.push(child);
-  // }
 }

@@ -10,6 +10,7 @@ import {MenuButtonDirective} from './menu-button.directive';
 import {RootMenu} from './menu';
 import {MenuKeyboardManager} from './keymanager';
 import {Subject} from 'rxjs';
+import {MenuMouseManager} from './mouse-manager';
 
 /*
   TODO
@@ -35,7 +36,9 @@ export class MenuBarDirective extends RootMenu implements AfterContentInit {
   closeEventEmitter = new Subject<void>();
 
   private _keyManager: MenuKeyboardManager;
-  private _closeHandler = new CloseoutHandler(this.getChildren());
+  private _mouseManager: MenuMouseManager;
+
+  private _closeHandler = new CloseoutHandler(this._getChildren());
 
   @ContentChildren(MenuButtonDirective, {descendants: true})
   private readonly _allItems: QueryList<MenuButtonDirective>;
@@ -57,33 +60,9 @@ export class MenuBarDirective extends RootMenu implements AfterContentInit {
     // we can set the orientation here based on whether it's a menu bar
     // and if the orientation is set or not
     console.log(this.orientation);
-    this._keyManager = new MenuKeyboardManager(this._allItems, this.orientation);
-    // need this to grab the child events -- once the new keyboard handler is put in place
-    // this._allItems.forEach(child => {
-    // child._menu._keyboardEventEmitter.subscribe((e) => this._keyManager.keydown(e));
-    // });
 
-    // temporary -- GET RID OF THIS
-    // we don't need a mouseEnterEmitter
-    // we should listen for submenu events
-    this._allItems.forEach((c) => {
-      c.mouseEnterEmitter.subscribe((element: MenuButtonDirective) => {
-        this._allItems.forEach((child) => {
-          if (child !== element) {
-            child.closeMenu();
-          }
-        });
-      });
-      // c.keyboardEventEmitter.subscribe((e) => {
-      // do we need to register this here?
-      // can we move this logic into the _keyManager?
-      // TODO determine when this fires? Only in open children?
-      // this._keyManager.handleEvent(e);
-      // });
-      // if (c._menuPanel) {
-      // c._menuPanel._menu.closeEventEmitter.subscribe(() => this.closeEventEmitter.next());
-      // }
-    });
+    this._keyManager = new MenuKeyboardManager(this._allItems, this.orientation);
+    this._mouseManager = new MenuMouseManager(this._keyManager, this._allItems, false);
   }
 
   focusFirstChild() {
@@ -92,6 +71,10 @@ export class MenuBarDirective extends RootMenu implements AfterContentInit {
 
   focusLastChild() {
     this._keyManager.focusLastItem();
+  }
+
+  getChildren() {
+    return this._allItems;
   }
 }
 

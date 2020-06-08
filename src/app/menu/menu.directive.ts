@@ -9,9 +9,9 @@ import {
 } from '@angular/core';
 import {MenuPanelDirective} from './menu-panel.directive';
 import {MenuButtonDirective} from './menu-button.directive';
-import {RootMenu} from './menu';
+import {RootMenu, Menu} from './menu';
 import {MenuKeyboardManager} from './keymanager';
-import {Subject} from 'rxjs';
+import {MenuMouseManager} from './mouse-manager';
 
 /*
   TODO
@@ -22,36 +22,29 @@ import {Subject} from 'rxjs';
   exportAs: 'cdkMenu',
   host: {
     '(keydown)': '_keyManager.handleEvent($event)',
-    '(mouseenter)': 'mouseEnter($event)',
     // a11y
     role: 'menu',
     '[attr.aria-orientation]': 'orientation',
     '[attr.aria-lablledby]': 'lablledBy',
   },
 })
-export class MenuDirective extends RootMenu implements AfterContentInit, OnDestroy {
+export class MenuDirective extends RootMenu implements AfterContentInit, OnDestroy, Menu {
   @Input('cdkMenuOrientation') orientation: 'horizontal' | 'vertical' = 'vertical';
-  // private _keyManager = new MenuKeyManager(this.getChildren());
+
   private _keyManager: MenuKeyboardManager;
+  _mouseManager: MenuMouseManager;
 
   @ContentChildren(MenuButtonDirective, {descendants: true}) private readonly _allItems: QueryList<
     MenuButtonDirective
   >;
 
-  // TODO clean these up
-  get closeEventEmitter() {
-    return new Subject<void>();
-    // return this._keyManager.closeEventEmitter;
-  }
-  get keyboardEventEmitter() {
-    return this._keyManager._keyboardEventEmitter;
-  }
   get _keyboardEventEmitter() {
     return this._keyManager._keyboardEventEmitter;
   }
-  // get tabEventEmitter() {
-  // return this._keyManager.tabEventEmitter;
-  // }
+
+  get _activationEventEmitter() {
+    return this._mouseManager._activationEventEmitter;
+  }
 
   lablledBy: string | null = null;
 
@@ -60,11 +53,9 @@ export class MenuDirective extends RootMenu implements AfterContentInit, OnDestr
   }
 
   ngAfterContentInit() {
-    this._allItems.forEach((c) => {
-      c.keyboardEventEmitter.subscribe((e) => this.keyboardEventEmitter.next(e));
-    });
     this._keyManager = new MenuKeyboardManager(this._allItems, this.orientation);
-    this._parent.registerChildMenu(this);
+    this._mouseManager = new MenuMouseManager(this._keyManager, this._allItems, true);
+    this._parent.registerMenu(this);
   }
 
   focusFirstChild() {
@@ -76,6 +67,13 @@ export class MenuDirective extends RootMenu implements AfterContentInit, OnDestr
 
   ngOnDestroy() {
     this._keyManager.onDestroy();
+    this._mouseManager.onDestroy();
+    // close any open child menu items when this menu gets destroyed
+    this._allItems.filter((c) => c.hasSubmenu() && c.isMenuOpen()).forEach((c) => c.onClick());
+  }
+
+  getChildren() {
+    return this._allItems;
   }
 
   // registerChild(child: MenuButtonDirective) {
