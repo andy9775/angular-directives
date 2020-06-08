@@ -63,6 +63,9 @@ export class MenuBarDirective extends RootMenu implements AfterContentInit {
 
     this._keyManager = new MenuKeyboardManager(this._allItems, this.orientation);
     this._mouseManager = new MenuMouseManager(this._keyManager, this._allItems, false);
+    if (this._allItems.first) {
+      this._allItems.first._tabIndex = 0;
+    }
   }
 
   focusFirstChild() {

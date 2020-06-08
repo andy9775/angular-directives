@@ -112,13 +112,13 @@ abstract class MenuButton {
     '[attr.role]': 'role',
     type: 'button', // necessary ??
     // only has 0 tab index if focused and is a button inside the menuBar
-    '[tabindex]': '(_isFocused && !_parentMenuBar) ? "0" : "-1"', // check if disabledj
+    '[tabindex]': '_tabIndex', // check if disabledj
     // '[tabindex]': '(_isFocused && !!_parentMenu) ? "0" : "-1"', // check if disabled
-    '[attr.aria-haspopup]': '!!templateRef ? "menu" : "false"', // only if it has a ref??
-    '[attr.aria-expanded]': '!!templateRef ? !!_overlayRef : null',
+    '[attr.aria-haspopup]': '!!_menuPanel ? "menu" : "false"', // only if it has a ref??
+    '[attr.aria-expanded]': '!!_menuPanel ? !!_overlayRef : null',
     '[attr.aria-checked]': '_checked()',
     '[attr.aria-disabled]': 'disabled.toString()',
-    '[attr.aria-controls]': '!!templateRef && !!templateRef.child ? templateRef.child.id : null',
+    '[attr.aria-controls]': '!!_menuPanel  ? _menuPanel.id : null',
   },
 })
 export class MenuButtonDirective extends MenuButton
@@ -129,6 +129,8 @@ export class MenuButtonDirective extends MenuButton
   // implementation can be to get the currently checked button from the parent
   // and see if that is this button (or parentMenu.isChecked(menButton) )
   @Input() role: 'menuitem' | 'menuitemradio' | 'menuitemcheckbox' = 'menuitem';
+
+  _tabIndex: 0 | -1 = -1;
 
   @Input('cdkTriggerFor') _menuPanel: MenuPanelDirective;
 
