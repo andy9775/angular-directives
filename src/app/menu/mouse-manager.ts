@@ -3,6 +3,7 @@ import {QueryList} from '@angular/core';
 import {MenuButtonDirective} from './menu-button.directive';
 import {Subject} from 'rxjs';
 import {filter, takeUntil} from 'rxjs/operators';
+import {FocusEmitter} from './focus-emitter';
 
 /*
 
@@ -16,20 +17,17 @@ export class MenuMouseManager {
   constructor(
     private readonly _keyManager: MenuKeyboardManager,
     private readonly _children: QueryList<MenuButtonDirective>,
+    private readonly _focusEmiter: FocusEmitter,
     private readonly _openOnHover: boolean = false // whether to open a button's submenu on hover
   ) {
-    _children.forEach((button) => {
-      // when mouse places focus on a MenuButton we change
-      // the focus in the MenuKeyboardManager which
-      // allows a user to continue keyboard events from
-      // where the mouse left off
-      button.focusEventEmitter
-        .pipe(
-          filter((_button) => !!_button),
-          takeUntil(this._destroyMouseSubscription)
-        )
-        .subscribe(this._handleFocusChange.bind(this));
+    _focusEmiter.focus
+      .pipe(
+        filter((b) => !!b),
+        takeUntil(this._destroyMouseSubscription)
+      )
+      .subscribe(this._handleFocusChange.bind(this));
 
+    _children.forEach((button) => {
       button.activateEventEmitter
         .pipe(takeUntil(this._destroyMouseSubscription))
         .subscribe(this._handleActivatedButton.bind(this));
