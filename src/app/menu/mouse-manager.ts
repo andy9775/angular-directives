@@ -2,16 +2,7 @@ import {MenuKeyboardManager} from './keymanager';
 import {QueryList} from '@angular/core';
 import {MenuButtonDirective} from './menu-button.directive';
 import {Subject} from 'rxjs';
-import {
-  filter,
-  takeUntil,
-  debounce,
-  debounceTime,
-  last,
-  takeLast,
-  take,
-  throttleTime,
-} from 'rxjs/operators';
+import {filter, takeUntil} from 'rxjs/operators';
 
 /*
 
