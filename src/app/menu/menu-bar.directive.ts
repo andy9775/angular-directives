@@ -81,6 +81,7 @@ export class MenuDirective implements AfterContentInit {
       if (this._allItems.first) {
         this._allItems.first._tabIndex = 0;
       }
+      this._allItems.forEach((c) => (c._openDirection = 'bottom'));
     } else {
       this._orientation = this._orientation || 'vertical';
     }

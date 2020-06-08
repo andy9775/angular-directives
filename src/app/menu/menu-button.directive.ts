@@ -8,7 +8,6 @@ import {FocusableOption, ListKeyManagerOption} from '@angular/cdk/a11y';
 import {RIGHT_ARROW, LEFT_ARROW, ESCAPE, SPACE, ENTER} from '@angular/cdk/keycodes';
 import {MenuGroupDirective} from './menu-group.directive';
 import {CheckboxStateService} from './checkbox-state.service';
-import {MenuDirective} from './menu-bar.directive';
 import {FocusEmitter} from './focus-emitter';
 import {ActivationEmitter} from './activation-emitter';
 
@@ -24,7 +23,6 @@ abstract class MenuButton {
   protected abstract _element: ElementRef<HTMLElement>;
   protected abstract _viewContainer: ViewContainerRef;
   // protected abstract _parentMenu?: MenuDirective;
-  protected abstract _parent?: MenuDirective;
 
   protected _overlayRef: OverlayRef;
 
@@ -32,6 +30,8 @@ abstract class MenuButton {
 
   keyboardEventEmitter = new Subject<KeyboardEvent>();
   closeEventEmitter = new Subject<void>();
+
+  _openDirection: 'side' | 'bottom' = 'side';
 
   abstract focus(): void;
 
@@ -76,7 +76,7 @@ abstract class MenuButton {
       .flexibleConnectedTo(this._element)
       .setOrigin(this._element)
       .withPositions([
-        this._parent._orientation === 'horizontal'
+        this._openDirection === 'bottom'
           ? {
               originX: 'start',
               originY: 'bottom',
@@ -164,7 +164,6 @@ export class MenuButtonDirective extends MenuButton
     private _focusEmitter: FocusEmitter,
     private _activationEmitter: ActivationEmitter,
     // @Optional() protected _parentMenu?: MenuDirective,
-    @Optional() protected _parent?: MenuDirective,
     @Optional() private _group?: MenuGroupDirective
   ) {
     super();
