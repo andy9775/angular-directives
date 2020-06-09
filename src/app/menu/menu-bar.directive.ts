@@ -17,6 +17,7 @@ import {FocusEmitter} from './focus-emitter';
 import {ActivationEmitter} from './activation-emitter';
 import {UniqueSelectionDispatcher} from '@angular/cdk/collections';
 
+export class MenuEvent {}
 /*
   TODO
     aria-label/lablledby? - up to the user?

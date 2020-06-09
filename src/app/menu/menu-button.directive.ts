@@ -169,7 +169,6 @@ export class MenuButtonDirective extends MenuButton
     protected _viewContainer: ViewContainerRef,
     // need someway to set the initial state of the checkbox
     // also need to emit events to update external components of changed state
-    private state: CheckboxStateService,
     private _focusEmitter: FocusEmitter,
     private _activationEmitter: ActivationEmitter,
     private _groupHandler: UniqueSelectionDispatcher
@@ -212,7 +211,6 @@ export class MenuButtonDirective extends MenuButton
   }
 
   onClick() {
-    this.state.toggle(this);
     // check - do nothing if there is a child menu?
     // TODO should this emit an event?
     this.isMenuOpen() ? this.closeMenu() : this._openMenu();
