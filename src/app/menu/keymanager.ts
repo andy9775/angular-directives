@@ -14,7 +14,7 @@ import {MenuButtonDirective} from './menu-button.directive';
 import {FocusKeyManager} from '@angular/cdk/a11y';
 import {Subject, Subscription} from 'rxjs';
 import {QueryList} from '@angular/core';
-import {takeUntil} from 'rxjs/operators';
+import {takeUntil, take, first} from 'rxjs/operators';
 
 /*
   NOTES:
@@ -45,20 +45,24 @@ export class MenuKeyboardManager {
       this._keyManager = this._keyManager.withVerticalOrientation();
     }
 
-    this._keyManager.change.subscribe(() => {
-      // cancel previous subscription
-      this._destroyKeyboardSubscription.next();
-      this._keyManager.activeItem.open
-        .pipe(takeUntil(this._destroyKeyboardSubscription))
-        .subscribe(() => {
-          if (this._keyManager.activeItem.hasSubmenu()) {
-            this._keyManager.activeItem._menuPanel._menu._keyManager._keyboardEventEmitter
-              .pipe(takeUntil(this._destroyKeyboardSubscription))
-              .subscribe((e) => {
-                this.handleEvent(e, true);
-              });
-          }
-        });
+    this._keyManager.change.subscribe(this._handleOnChange.bind(this));
+  }
+
+  private _handleOnChange() {
+    // cancel previous subscriptions
+    this._destroyKeyboardSubscription.next();
+
+    const active = this._keyManager.activeItem;
+    const stopCondition = takeUntil(this._destroyKeyboardSubscription);
+
+    active.open.pipe(stopCondition).subscribe(() => {
+      if (active.hasSubmenu()) {
+        active._menuPanel._menu._keyManager._keyboardEventEmitter
+          .pipe(stopCondition)
+          .subscribe((e: KeyboardEvent) => {
+            this.handleEvent(e, true);
+          });
+      }
     });
   }
 

@@ -31,7 +31,7 @@ abstract class MenuButton {
   protected abstract _element: ElementRef<HTMLElement>;
   protected abstract _viewContainer: ViewContainerRef;
   // protected abstract _parentMenu?: MenuDirective;
-  protected abstract _parent?: MenuDirective;
+  // protected abstract _parent?: MenuDirective;
 
   protected _overlayRef: OverlayRef;
 
