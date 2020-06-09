@@ -17,6 +17,8 @@ import {FocusEmitter} from './focus-emitter';
 import {ActivationEmitter} from './activation-emitter';
 import {UniqueSelectionDispatcher} from '@angular/cdk/collections';
 
+export class EventPipe {}
+
 export class MenuEvent {}
 /*
   TODO
@@ -50,6 +52,7 @@ export class MenuDirective implements AfterContentInit {
   _keyManager: MenuKeyboardManager;
   _mouseManager: MenuMouseManager;
 
+  _eventPipe: EventPipe;
   // private _closeHandler = new CloseoutHandler(this._getChildren());
 
   @ContentChildren(MenuButtonDirective, {descendants: true})

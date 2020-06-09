@@ -20,6 +20,7 @@ import {CheckboxStateService} from './checkbox-state.service';
 import {FocusEmitter} from './focus-emitter';
 import {ActivationEmitter} from './activation-emitter';
 import {UniqueSelectionDispatcher} from '@angular/cdk/collections';
+import {MenuDirective} from './menu-bar.directive';
 
 let _uniqueIdCounter = 0;
 @Directive()
@@ -30,6 +31,7 @@ abstract class MenuButton {
   protected abstract _element: ElementRef<HTMLElement>;
   protected abstract _viewContainer: ViewContainerRef;
   // protected abstract _parentMenu?: MenuDirective;
+  protected abstract _parent?: MenuDirective;
 
   protected _overlayRef: OverlayRef;
 
@@ -74,6 +76,10 @@ abstract class MenuButton {
 
       this._setCloseHandlers();
       // this._menuPanel._menu.lablledBy = this.id;
+      // an alternative way to connect menu events and bubble them up
+      // this._menuPanel._menu._keyManager._keyboardEventEmitter.subscribe((e) => {
+      //   this._parent._keyManager.handleEvent(e, true);
+      // });
     }
   }
 
@@ -171,6 +177,8 @@ export class MenuButtonDirective extends MenuButton
     // also need to emit events to update external components of changed state
     private _focusEmitter: FocusEmitter,
     private _activationEmitter: ActivationEmitter,
+    // parent necessary for the alternative way of bubbling up events
+    // @Optional() protected _parent?: MenuDirective
     private _groupHandler: UniqueSelectionDispatcher
   ) {
     super();
