@@ -1,4 +1,13 @@
-import {Directive, ElementRef, Input, ViewContainerRef, Optional} from '@angular/core';
+import {
+  Directive,
+  ElementRef,
+  Input,
+  ViewContainerRef,
+  Optional,
+  AfterContentInit,
+  Output,
+  OnDestroy,
+} from '@angular/core';
 import {Overlay, OverlayRef} from '@angular/cdk/overlay';
 import {TemplatePortal} from '@angular/cdk/portal';
 import {MenuPanelDirective} from './menu-panel.directive';
@@ -10,14 +19,12 @@ import {MenuGroupDirective} from './menu-group.directive';
 import {CheckboxStateService} from './checkbox-state.service';
 import {FocusEmitter} from './focus-emitter';
 import {ActivationEmitter} from './activation-emitter';
+import {UniqueSelectionDispatcher} from '@angular/cdk/collections';
 
+let _uniqueIdCounter = 0;
 @Directive()
 /** @docs-private */
 abstract class MenuButton {
-  abstract get id(): string;
-  abstract set id(val: string);
-  protected _id: string;
-
   abstract _menuPanel: MenuPanelDirective;
   protected abstract _overlay: Overlay;
   protected abstract _element: ElementRef<HTMLElement>;
@@ -118,12 +125,12 @@ abstract class MenuButton {
     '[attr.aria-haspopup]': '!!_menuPanel ? "menu" : "false"', // only if it has a ref??
     '[attr.aria-expanded]': '!!_menuPanel ? !!_overlayRef : null',
     '[attr.aria-checked]': '_checked()',
-    '[attr.aria-disabled]': 'disabled.toString()',
+    '[attr.aria-disabled]': 'disabled ? null : disabled.toString()',
     '[attr.aria-controls]': '!!_menuPanel  ? _menuPanel.id : null',
   },
 })
 export class MenuButtonDirective extends MenuButton
-  implements FocusableOption, ListKeyManagerOption {
+  implements FocusableOption, ListKeyManagerOption, AfterContentInit, OnDestroy {
   // TODO upon clicking a button, the menu should track the last clicked
   // which can track radio/checkbox logic - it should also set aria-checked
   // which can be set in the parent menu
@@ -135,17 +142,22 @@ export class MenuButtonDirective extends MenuButton
 
   @Input('cdkTriggerFor') _menuPanel: MenuPanelDirective;
 
+  @Output() open: Subject<MenuButtonDirective> = new Subject();
+
   private _isFocused = false;
 
-  @Input('id')
-  set id(val: string) {
-    if (!this._id) {
-      this._id = val;
-    }
+  @Input() checked = false;
+
+  @Input() id = `menu-button-${_uniqueIdCounter++}`;
+
+  @Input()
+  get name(): string {
+    return this._name;
   }
-  get id() {
-    return this._id || this._element.nativeElement.getAttribute('id');
+  set name(value: string) {
+    this._name = value;
   }
+  _name = this.id;
 
   get disabled() {
     return this._element.nativeElement.getAttribute('disabled') || false;
@@ -160,10 +172,28 @@ export class MenuButtonDirective extends MenuButton
     private state: CheckboxStateService,
     private _focusEmitter: FocusEmitter,
     private _activationEmitter: ActivationEmitter,
-    // @Optional() protected _parentMenu?: MenuDirective,
-    @Optional() private _group?: MenuGroupDirective
+    private _groupHandler: UniqueSelectionDispatcher
   ) {
     super();
+  }
+
+  _openMenu() {
+    super._openMenu();
+    this.open.next(this);
+  }
+
+  ngAfterContentInit() {
+    // TODO emit change or clicked event
+    if (this.role !== 'menuitem') {
+      this._groupHandler.listen((id, name) => {
+        const clickedThis = id === this.id && name === this.name;
+        if (this.role === 'menuitemcheckbox') {
+          this.checked = clickedThis ? !this.checked : this.checked;
+        } else {
+          this.checked = clickedThis;
+        }
+      });
+    }
   }
 
   _isItem() {
@@ -175,24 +205,19 @@ export class MenuButtonDirective extends MenuButton
   }
 
   private _checked() {
-    if (!!this._group && this.role === 'menuitemradio') {
-      return this._group.isActiveChild(this).toString();
-    } else if (this.role === 'menuitemcheckbox') {
-      return this.state.isChecked(this).toString();
+    if (this.role === 'menuitem') {
+      return null;
     }
-
-    return null;
+    return this.checked;
   }
 
   onClick() {
-    if (!!this._group) {
-      this._group.setActiveChild(this);
-    }
     this.state.toggle(this);
     // check - do nothing if there is a child menu?
     // TODO should this emit an event?
     this.isMenuOpen() ? this.closeMenu() : this._openMenu();
     this._activationEmitter.activate.next(this);
+    this._groupHandler.notify(this.id, this.name);
   }
 
   focus() {
@@ -204,5 +229,8 @@ export class MenuButtonDirective extends MenuButton
   getLabel() {
     // TODO better way to get the label
     return this._element.nativeElement.innerText;
+  }
+  ngOnDestroy() {
+    this.open.complete();
   }
 }

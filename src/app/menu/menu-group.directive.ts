@@ -1,6 +1,7 @@
 import {Directive, Input} from '@angular/core';
 import {MenuButtonDirective} from './menu-button.directive';
 import {RadioGroupSelectionService} from './radio-group-selection.service';
+import {UniqueSelectionDispatcher} from '@angular/cdk/collections';
 
 // this and menu should provide a Updater
 @Directive({
@@ -9,6 +10,7 @@ import {RadioGroupSelectionService} from './radio-group-selection.service';
   host: {
     role: 'group',
   },
+  providers: [UniqueSelectionDispatcher],
 })
 export class MenuGroupDirective {
   @Input('cdkMenuRadioGroup') _id: string;

@@ -7,20 +7,8 @@ import {MenuButtonDirective} from './menu-button.directive';
 import {MenuGroupDirective} from './menu-group.directive';
 
 @NgModule({
-  declarations: [
-    MenuPanelDirective,
-    // MenuBarDirective,
-    MenuButtonDirective,
-    MenuDirective,
-    MenuGroupDirective,
-  ],
+  declarations: [MenuPanelDirective, MenuButtonDirective, MenuDirective, MenuGroupDirective],
   imports: [CommonModule],
-  exports: [
-    MenuPanelDirective,
-    // MenuBarDirective,
-    MenuButtonDirective,
-    MenuDirective,
-    MenuGroupDirective,
-  ],
+  exports: [MenuPanelDirective, MenuButtonDirective, MenuDirective, MenuGroupDirective],
 })
 export class MenuModule {}

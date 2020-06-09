@@ -15,6 +15,7 @@ import {MenuMouseManager} from './mouse-manager';
 import {MenuPanelDirective} from './menu-panel.directive';
 import {FocusEmitter} from './focus-emitter';
 import {ActivationEmitter} from './activation-emitter';
+import {UniqueSelectionDispatcher} from '@angular/cdk/collections';
 
 /*
   TODO
@@ -33,7 +34,7 @@ import {ActivationEmitter} from './activation-emitter';
     '[attr.aria-lablledby]': 'lablledBy',
     // '(document:click)': '_closeHandler.doClick($event)',
   },
-  providers: [FocusEmitter, ActivationEmitter],
+  providers: [FocusEmitter, ActivationEmitter, UniqueSelectionDispatcher],
 })
 export class MenuDirective implements AfterContentInit {
   // according to the aria spec, menu bars have horizontal default orientation
@@ -56,6 +57,8 @@ export class MenuDirective implements AfterContentInit {
   // we can use a single Menu directive to match both a MenuBar and Menu
   // based on the direction.
   readonly _isMenuBar = false;
+
+  _promises: Array<Promise<() => void>> = [];
 
   constructor(
     protected _element: ElementRef,
@@ -94,6 +97,13 @@ export class MenuDirective implements AfterContentInit {
       this._activationEmitter,
       this._role === 'menu'
     );
+
+    Promise.resolve(this._promises);
+  }
+  onOpen(f: () => void) {
+    const r = new Promise<() => void>(f);
+    this._promises.push(r);
+    return r;
   }
 
   focusFirstChild() {

@@ -44,19 +44,22 @@ export class MenuKeyboardManager {
     } else {
       this._keyManager = this._keyManager.withVerticalOrientation();
     }
-  }
 
-  private _subscribe() {
-    this._destroyKeyboardSubscription.next();
-    // bubble up keyboard events which aren't handled in the child
-    // and handle them here.
-    if (this._keyManager.activeItem.hasSubmenu()) {
-      this._keyManager.activeItem._menuPanel._menu._keyManager._keyboardEventEmitter
+    this._keyManager.change.subscribe(() => {
+      // cancel previous subscription
+      this._destroyKeyboardSubscription.next();
+      this._keyManager.activeItem.open
         .pipe(takeUntil(this._destroyKeyboardSubscription))
-        .subscribe((e) => {
-          this.handleEvent(e, true);
+        .subscribe(() => {
+          if (this._keyManager.activeItem.hasSubmenu()) {
+            this._keyManager.activeItem._menuPanel._menu._keyManager._keyboardEventEmitter
+              .pipe(takeUntil(this._destroyKeyboardSubscription))
+              .subscribe((e) => {
+                this.handleEvent(e, true);
+              });
+          }
         });
-    }
+    });
   }
 
   focusFirstItem() {
@@ -92,7 +95,6 @@ export class MenuKeyboardManager {
           if (activeItem.isMenuOpen()) {
             activeItem._menuPanel._menu.focusFirstChild();
           }
-          this._subscribe();
         }
         if (bubbled && activeItem.isMenuOpen()) {
           activeItem.onClick();
@@ -137,7 +139,6 @@ export class MenuKeyboardManager {
           if (activeItem && activeItem.hasSubmenu() && !bubbled) {
             activeItem.onClick();
             activeItem._menuPanel._menu.focusFirstChild();
-            this._subscribe();
           } else {
             if (activeItem.isMenuOpen()) {
               activeItem.onClick();
@@ -154,7 +155,7 @@ export class MenuKeyboardManager {
             if (!activeItem.isMenuOpen()) {
               activeItem.onClick();
             }
-            this._subscribe();
+
             event.keyCode === DOWN_ARROW
               ? activeItem._menuPanel._menu.focusFirstChild()
               : activeItem._menuPanel._menu.focusLastChild();
