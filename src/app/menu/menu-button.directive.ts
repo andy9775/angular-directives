@@ -30,7 +30,7 @@ import {CheckboxStateService} from './checkbox-state.service';
     // only has 0 tab index if focused and is a button inside the menuBar
     '[tabindex]': '(isFocused && !!_parentMenu) ? "0" : "-1"', // check if disabled
     '[attr.aria-haspopup]': '!!templateRef ? "menu" : "false"', // only if it has a ref??
-    '[attr.aria-expanded]': '!!templateRef ? !!_overlayRef : null',
+    '[attr.aria-expanded]': 'isOpen() || null',
     '[attr.aria-checked]': '_checked()',
     '[attr.aria-disabled]': 'disabled.toString()',
     '[attr.aria-controls]': '!!templateRef && !!templateRef.child ? templateRef.child.id() : null',
@@ -162,7 +162,7 @@ export class MenuButtonDirective implements FocusableOption, ListKeyManagerOptio
       }
 
       // get focus event from the sub-menu
-      this.templateRef.child.focusEventEmitter.subscribe((c) => {
+      this.templateRef.child.focusEventEmitter.subscribe(c => {
         this.focusEventEmitter.next(c);
       });
 
@@ -188,7 +188,7 @@ export class MenuButtonDirective implements FocusableOption, ListKeyManagerOptio
 
   closeMenu() {
     if (this.templateRef && this.templateRef.child) {
-      this.templateRef.child.children.forEach((child) => child.closeMenu());
+      this.templateRef.child.children.forEach(child => child.closeMenu());
       this.templateRef.child.closeEventEmitter.unsubscribe();
     }
     // TODO better clean up
